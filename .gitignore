@@ -20,3 +20,4 @@ ui/__pycache__/registration_tab.cpython-311.pyc
 ui/__pycache__/server_assignment_dialog.cpython-311.pyc
 *__pycache__
 *.pyc
+utils/__pycache__/style_manager.cpython-311.pyc

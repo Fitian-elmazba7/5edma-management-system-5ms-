@@ -175,18 +175,8 @@ class ComparisonReportTab(QWidget):
         # عنوان القسم
         title_label = QLabel("📊 تقارير مقارنة الحضور")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 18px;
-                font-weight: bold;
-                color: white;
-                padding: 12px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 #9b59b6, stop:1 #8e44ad);
-                border-radius: 8px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         
         # مجموعة اختيار الفترة
         period_group = QGroupBox("⏰ تحديد الفترة الزمنية")
@@ -194,7 +184,8 @@ class ComparisonReportTab(QWidget):
         
         period_info_layout = QHBoxLayout()
         self.period_label = QLabel("الفترة: غير محدد")
-        self.period_label.setStyleSheet("QLabel { font-weight: bold; color: #2c3e50; }")
+        self.period_label.setProperty("class", "info-label")
+
         
         self.select_period_btn = QPushButton("📅 اختيار الفترة")
         self.select_period_btn.clicked.connect(self.select_date_range)
@@ -207,15 +198,8 @@ class ComparisonReportTab(QWidget):
         
         # معلومات أيام الخدمة
         self.service_days_info = QLabel("أيام الخدمة: الخميس فقط")
-        self.service_days_info.setStyleSheet("""
-            QLabel {
-                color: #27ae60;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-            }
-        """)
+        self.service_days_info.setProperty("class", "filter-info-success")
+
         period_layout.addWidget(self.service_days_info)
         
         period_group.setLayout(period_layout)
@@ -259,16 +243,8 @@ class ComparisonReportTab(QWidget):
         
         for label in [self.total_days_label, self.total_children_label, self.avg_attendance_label,
                      self.best_day_label, self.worst_day_label]:
-            label.setStyleSheet("""
-                QLabel {
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #ecf0f1;
-                    border-radius: 5px;
-                    margin: 2px;
-                    color: #2c3e50;
-                }
-            """)
+            label.setProperty("class", "info-label")
+
             stats_layout.addWidget(label)
         
         stats_group.setLayout(stats_layout)
@@ -327,16 +303,8 @@ class ComparisonReportTab(QWidget):
         
         # معلومات التصفية
         self.filter_info_label = QLabel("جاري عرض جميع الأيام")
-        self.filter_info_label.setStyleSheet("""
-            QLabel {
-                color: #e74c3c;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #fdf2e9;
-                border-radius: 5px;
-                margin-bottom: 5px;
-            }
-        """)
+        self.filter_info_label.setProperty("class", "filter-info-danger")
+
         layout.addWidget(self.filter_info_label)
         
         self.summary_table = QTableWidget()
@@ -358,16 +326,8 @@ class ComparisonReportTab(QWidget):
         
         # معلومات التصفية
         self.details_filter_label = QLabel("جاري عرض جميع الأيام")
-        self.details_filter_label.setStyleSheet("""
-            QLabel {
-                color: #e74c3c;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #fdf2e9;
-                border-radius: 5px;
-                margin-bottom: 5px;
-            }
-        """)
+        self.details_filter_label.setProperty("class", "filter-info-danger")
+
         layout.addWidget(self.details_filter_label)
         
         # اختيار التاريخ
@@ -449,52 +409,20 @@ class ComparisonReportTab(QWidget):
         followup_stats_layout = QHBoxLayout()
         
         self.excellent_label = QLabel("ممتاز: 0")
-        self.excellent_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #27ae60;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.excellent_label.setProperty("class", "status-excellent")
+
         
         self.good_label = QLabel("جيد: 0")
-        self.good_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #3498db;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.good_label.setProperty("class", "status-good")
+
         
         self.need_followup_label = QLabel("يحتاج متابعة: 0")
-        self.need_followup_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #f39c12;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.need_followup_label.setProperty("class", "status-warning")
+
         
         self.urgent_label = QLabel("متابعة عاجلة: 0")
-        self.urgent_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #e74c3c;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.urgent_label.setProperty("class", "status-urgent")
+
         
         followup_stats_layout.addWidget(self.excellent_label)
         followup_stats_layout.addWidget(self.good_label)
@@ -773,28 +701,16 @@ class ComparisonReportTab(QWidget):
             days_text = ", ".join([arabic_days.get(day, day) for day in self.service_days_list])
             filter_text += f"\n🗓️ الأيام المعروضة: {days_text}"
             
-            self.filter_info_label.setStyleSheet("""
-                QLabel {
-                    color: #27ae60;
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #e8f6f3;
-                    border-radius: 5px;
-                    margin-bottom: 5px;
-                }
-            """)
+            self.filter_info_label.setProperty("class", "filter-info-success")
+            self.filter_info_label.style().unpolish(self.filter_info_label)
+            self.filter_info_label.style().polish(self.filter_info_label)
+
         else:
             filter_text = "📅 جاري عرض جميع الأيام في الفترة"
-            self.filter_info_label.setStyleSheet("""
-                QLabel {
-                    color: #3498db;
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #ebf5fb;
-                    border-radius: 5px;
-                    margin-bottom: 5px;
-                }
-            """)
+            self.filter_info_label.setProperty("class", "filter-info-primary")
+            self.filter_info_label.style().unpolish(self.filter_info_label)
+            self.filter_info_label.style().polish(self.filter_info_label)
+
         
         self.filter_info_label.setText(filter_text)
         self.details_filter_label.setText(filter_text)

@@ -129,17 +129,8 @@ class EarlyArrivalTab(QWidget):
         # عنوان القسم
         title_label = QLabel("𓃷 مكافأة الحضور المبكر")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 15px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #27ae60, stop:1 #2ecc71);
-                border-radius: 8px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         
         # مجموعة الإعدادات
         settings_group = QGroupBox("🕒 إعدادات التقرير")
@@ -200,7 +191,8 @@ class EarlyArrivalTab(QWidget):
         service_time_layout = QHBoxLayout()
         service_time_layout.addWidget(QLabel("⛪ وقت الخدمة الرسمي:"))
         self.service_time_label = QLabel("07:00 PM - الخميس")
-        self.service_time_label.setStyleSheet("QLabel { font-weight: bold; color: #e74c3c; }")
+        self.service_time_label.setProperty("class", "info-label")
+
         
         self.change_service_btn = QPushButton("تغيير الإعدادات")
         self.change_service_btn.clicked.connect(self.change_service_settings)
@@ -241,15 +233,8 @@ class EarlyArrivalTab(QWidget):
         
         for label in [self.total_attendance_label, self.early_arrival_label, 
                      self.percentage_label, self.avg_arrival_label]:
-            label.setStyleSheet("""
-                QLabel { 
-                    font-weight: bold; 
-                    padding: 8px; 
-                    background-color: #f8f9fa;
-                    border-radius: 5px;
-                    margin: 2px;
-                }
-            """)
+            label.setProperty("class", "info-label")
+
             stats_layout.addWidget(label)
         
         stats_group.setLayout(stats_layout)
@@ -267,16 +252,8 @@ class EarlyArrivalTab(QWidget):
         
         # معلومات التصفية
         self.filter_info_label = QLabel("⚡ الأطفال الذين حضروا قبل الساعة: --:--")
-        self.filter_info_label.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-            }
-        """)
+        self.filter_info_label.setProperty("class", "info-label")
+
         right_layout.addWidget(self.filter_info_label)
         
         # جدول الحضور المبكر

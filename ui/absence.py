@@ -33,17 +33,9 @@ class AbsenceTab(QWidget):
         # عنوان القسم
         title_label = QLabel("𓃻 نظام متابعة الغياب")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 10px;
-                background-color: #e74c3c;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setProperty("class", "page-title")
+
         
         # مجموعة التحكم
         control_group = QGroupBox("إعدادات التقرير")
@@ -57,24 +49,8 @@ class AbsenceTab(QWidget):
         
         # زر توزيع المتابعة على الخدام
         self.server_assignment_btn = QPushButton("👥 توزيع المتابعة على الخدام")
-        self.server_assignment_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #7d3c98);
-            }
-            QPushButton:disabled {
-                background: #bdc3c7;
-                color: #7f8c8d;
-            }
-        """)
+        self.server_assignment_btn.setProperty("class", "btn-purple")
+
         self.server_assignment_btn.clicked.connect(self.open_server_assignment)
         self.server_assignment_btn.setEnabled(False)  # Initially disabled
         
@@ -85,7 +61,8 @@ class AbsenceTab(QWidget):
         
         # معلومات التاريخ المحدد
         self.date_info_label = QLabel("")
-        self.date_info_label.setStyleSheet("QLabel { color: #2c3e50; font-weight: bold; padding: 5px; }")
+        self.date_info_label.setProperty("class", "info-label")
+
         
         self.refresh_btn = QPushButton("تحديث البيانات")
         self.refresh_btn.clicked.connect(self.refresh_data)

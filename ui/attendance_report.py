@@ -37,17 +37,8 @@ class AttendanceReportTab(QWidget):
         # عنوان القسم
         title_label = QLabel("𓃭 تقرير الحضور الشامل")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 10px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #27ae60, stop:1 #2ecc71);
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         
         # مجموعة التحكم
         control_group = QGroupBox("إعدادات التقرير")
@@ -63,7 +54,8 @@ class AttendanceReportTab(QWidget):
         
         # معلومات التاريخ المحدد
         self.date_info_label = QLabel("")
-        self.date_info_label.setStyleSheet("QLabel { color: #2c3e50; font-weight: bold; padding: 5px; }")
+        self.date_info_label.setProperty("class", "info-label")
+
         
         self.refresh_btn = QPushButton("تحديث البيانات")
         self.refresh_btn.clicked.connect(self.refresh_data)
@@ -88,7 +80,8 @@ class AttendanceReportTab(QWidget):
         
         for label in [self.total_label, self.present_label, self.attendance_rate_label, 
                      self.class1_label, self.class2_label, self.class3_label]:
-            label.setStyleSheet("QLabel { font-weight: bold; padding: 5px; }")
+            label.setProperty("class", "info-label")
+
             stats_layout.addWidget(label)
         
         stats_group.setLayout(stats_layout)
@@ -101,37 +94,13 @@ class AttendanceReportTab(QWidget):
         all_export_layout = QHBoxLayout()
         self.export_excel_btn = QPushButton("📊 تصدير الكل إلى Excel")
         self.export_excel_btn.clicked.connect(self.export_to_excel)
-        self.export_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
+        self.export_excel_btn.setProperty("class", "btn-success")
+
         
         self.export_pdf_btn = QPushButton("📄 تصدير الكل إلى PDF")
         self.export_pdf_btn.clicked.connect(self.export_to_pdf)
-        self.export_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
+        self.export_pdf_btn.setProperty("class", "btn-danger")
+
         
         all_export_layout.addWidget(self.export_excel_btn)
         all_export_layout.addWidget(self.export_pdf_btn)
@@ -144,37 +113,13 @@ class AttendanceReportTab(QWidget):
         class1_layout = QHBoxLayout()
         self.export_class1_excel_btn = QPushButton("الصف الأول - Excel")
         self.export_class1_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الأول'))
-        self.export_class1_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        self.export_class1_excel_btn.setProperty("class", "default")
+
         
         self.export_class1_pdf_btn = QPushButton("الصف الأول - PDF")
         self.export_class1_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الأول'))
-        self.export_class1_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
+        self.export_class1_pdf_btn.setProperty("class", "btn-purple")
+
         
         class1_layout.addWidget(self.export_class1_excel_btn)
         class1_layout.addWidget(self.export_class1_pdf_btn)
@@ -183,37 +128,13 @@ class AttendanceReportTab(QWidget):
         class2_layout = QHBoxLayout()
         self.export_class2_excel_btn = QPushButton("الصف الثاني - Excel")
         self.export_class2_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الثاني'))
-        self.export_class2_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        self.export_class2_excel_btn.setProperty("class", "default")
+
         
         self.export_class2_pdf_btn = QPushButton("الصف الثاني - PDF")
         self.export_class2_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الثاني'))
-        self.export_class2_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
+        self.export_class2_pdf_btn.setProperty("class", "btn-purple")
+
         
         class2_layout.addWidget(self.export_class2_excel_btn)
         class2_layout.addWidget(self.export_class2_pdf_btn)
@@ -222,37 +143,13 @@ class AttendanceReportTab(QWidget):
         class3_layout = QHBoxLayout()
         self.export_class3_excel_btn = QPushButton("الصف الثالث - Excel")
         self.export_class3_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الثالث'))
-        self.export_class3_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        self.export_class3_excel_btn.setProperty("class", "default")
+
         
         self.export_class3_pdf_btn = QPushButton("الصف الثالث - PDF")
         self.export_class3_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الثالث'))
-        self.export_class3_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
+        self.export_class3_pdf_btn.setProperty("class", "btn-purple")
+
         
         class3_layout.addWidget(self.export_class3_excel_btn)
         class3_layout.addWidget(self.export_class3_pdf_btn)
@@ -279,17 +176,8 @@ class AttendanceReportTab(QWidget):
         
         # معلومات التقرير
         self.report_info_label = QLabel("تقرير الحضور الشامل")
-        self.report_info_label.setStyleSheet("""
-            QLabel {
-                font-size: 16px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        self.report_info_label.setProperty("class", "info-label")
+
         right_layout.addWidget(self.report_info_label)
         
         # جدول الحضور

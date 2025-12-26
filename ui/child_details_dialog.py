@@ -48,37 +48,13 @@ class ChildDetailsDialog(QDialog):
         button_layout = QHBoxLayout()
         
         self.save_btn = QPushButton("💾 حفظ التعديلات")
-        self.save_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
+        self.save_btn.setProperty("class", "btn-success")
+
         self.save_btn.clicked.connect(self.save_changes)
         
         self.close_btn = QPushButton("إغلاق")
-        self.close_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
+        self.close_btn.setProperty("class", "btn-danger")
+
         self.close_btn.clicked.connect(self.close)
         
         button_layout.addWidget(self.save_btn)
@@ -99,7 +75,8 @@ class ChildDetailsDialog(QDialog):
         # Code (read-only)
         self.code_input = QLineEdit()
         self.code_input.setReadOnly(True)
-        self.code_input.setStyleSheet("QLineEdit { background-color: #f8f9fa; }")
+        self.code_input.setReadOnly(True)
+
         
         # Name
         self.name_input = QLineEdit()

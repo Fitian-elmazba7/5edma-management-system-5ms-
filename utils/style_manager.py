@@ -7,7 +7,7 @@ class StyleManager:
         """Load the QSS stylesheet from the assets/styles directory."""
         try:
             # Assuming the assets directory is in the root of the project
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             style_path = os.path.join(base_dir, "assets", "styles", filename)
             
             if os.path.exists(style_path):

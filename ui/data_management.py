@@ -138,32 +138,15 @@ class ExcelInstructionsDialog(QDialog):
         
         # عنوان
         title_label = QLabel("📋 الحد الأدنى المطلوب لملف Excel")
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 18px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #3498db;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         title_label.setAlignment(Qt.AlignCenter)
         
         # التعليمات - تم إصلاح الألوان هنا
         instructions_text = QTextEdit()
         instructions_text.setReadOnly(True)
-        instructions_text.setStyleSheet("""
-            QTextEdit {
-                background-color: #ecf0f1;
-                color: #2c3e50;
-                font-size: 12px;
-                border: 1px solid #bdc3c7;
-                border-radius: 5px;
-                padding: 10px;
-            }
-        """)
+        instructions_text.setStyleSheet("")
+
         
         instructions_html = """
         <div dir="rtl" style="font-family: Arial; font-size: 12pt; line-height: 1.6;">
@@ -206,37 +189,13 @@ class ExcelInstructionsDialog(QDialog):
         button_layout = QHBoxLayout()
         download_template_btn = QPushButton("📥 تحميل نموذج Excel")
         download_template_btn.clicked.connect(self.download_template)
-        download_template_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
+        download_template_btn.setProperty("class", "btn-success")
+
         
         close_btn = QPushButton("إغلاق")
         close_btn.clicked.connect(self.accept)
-        close_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
+        close_btn.setProperty("class", "btn-danger")
+
         
         button_layout.addWidget(download_template_btn)
         button_layout.addStretch()
@@ -305,26 +264,7 @@ class DataManagementTab(ModernWidget):
         
         # مجموعة الاستيراد
         import_group = QGroupBox("𓃍 استيراد البيانات من Excel")
-        import_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #e74c3c;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
+
         import_layout = QVBoxLayout()
         
         self.import_btn = QPushButton("📥 استيراد بيانات الكنيسة")
@@ -333,44 +273,17 @@ class DataManagementTab(ModernWidget):
         # إضافة خيار الاستيراد التزايدي
         self.incremental_import = QCheckBox("استيراد تزايدي (إضافة بيانات جديدة فقط)")
         self.incremental_import.setChecked(True)
-        self.incremental_import.setStyleSheet("QCheckBox { color: #ecf0f1; padding: 8px; }")
+        self.incremental_import.setStyleSheet("")
+
         
         # زر تعليمات Excel الجديد
         self.instructions_btn = QPushButton("📋 تعليمات ملف Excel")
-        self.instructions_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #7d3c98);
-            }
-        """)
+        self.instructions_btn.setProperty("class", "btn-purple")
+
         
-        for btn in [self.import_btn, self.analyze_btn, self.instructions_btn]:
-            btn.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #3498db, stop: 0.7 #2980b9, stop: 1 #3498db);
-                    border: 1px solid #2574a9;
-                    border-radius: 6px;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 11px;
-                    padding: 8px 15px;
-                    min-width: 90px;
-                    min-height: 30px;
-                    margin: 2px;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #5dade2, stop: 0.7 #3498db, stop: 1 #5dade2);
-                }
-            """)
+        for btn in [self.import_btn, self.analyze_btn]:
+             btn.setProperty("class", "default")
+
         
         self.import_btn.clicked.connect(self.import_from_excel)
         self.analyze_btn.clicked.connect(self.analyze_excel)
@@ -385,44 +298,12 @@ class DataManagementTab(ModernWidget):
         # شريط التقدم
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
-        self.progress_bar.setStyleSheet("""
-            QProgressBar {
-                border: 2px solid #34495e;
-                border-radius: 5px;
-                background-color: #2c3e50;
-                text-align: center;
-                color: white;
-                font-size: 10px;
-            }
-            QProgressBar::chunk {
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                border-radius: 3px;
-            }
-        """)
+        self.progress_bar.setStyleSheet("")
+
         
         # مجموعة الإحصائيات
         stats_group = QGroupBox("𓃎 الإحصائيات")
-        stats_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #3498db;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
+
         stats_layout = QVBoxLayout()
         
         self.total_label = QLabel("👥 إجمالي الأطفال: 0")
@@ -431,42 +312,15 @@ class DataManagementTab(ModernWidget):
         self.class3_label = QLabel("📚 الصف الثالث: 0 طفل")
         
         for label in [self.total_label, self.class1_label, self.class2_label, self.class3_label]:
-            label.setStyleSheet("""
-                QLabel { 
-                    font-weight: bold; 
-                    padding: 8px; 
-                    background-color: #34495e;
-                    border-radius: 5px;
-                    margin: 2px;
-                    color: #ecf0f1;
-                }
-            """)
+            label.setProperty("class", "info-label")
             stats_layout.addWidget(label)
+
         
         stats_group.setLayout(stats_layout)
         
         # مجموعة الإجراءات
         actions_group = QGroupBox("𓃰 الإجراءات")
-        actions_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #27ae60;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
+
         actions_layout = QVBoxLayout()
         
         self.add_btn = QPushButton("➕ إضافة طفل جديد")
@@ -475,25 +329,8 @@ class DataManagementTab(ModernWidget):
         self.refresh_btn = QPushButton("🔄 تحديث البيانات")
         
         for btn in [self.add_btn, self.export_btn, self.export_modified_btn, self.refresh_btn]:
-            btn.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #3498db, stop: 0.7 #2980b9, stop: 1 #3498db);
-                    border: 1px solid #2574a9;
-                    border-radius: 6px;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 11px;
-                    padding: 8px 15px;
-                    min-width: 90px;
-                    min-height: 30px;
-                    margin: 2px;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #5dade2, stop: 0.7 #3498db, stop: 1 #5dade2);
-                }
-            """)
+            btn.setProperty("class", "default")
+
         
         self.add_btn.clicked.connect(self.add_child)
         self.export_btn.clicked.connect(self.export_to_excel)
@@ -552,42 +389,9 @@ class DataManagementTab(ModernWidget):
         self.setLayout(main_layout)
     
     def apply_scaled_stylesheet(self):
-        """تطبيق الأنماط المعدلة حسب التكبير"""
-        base_stylesheet = """
-        QGroupBox {
-            font-size: 13px;
-        }
-        QPushButton {
-            font-size: 11px;
-            padding: 8px 15px;
-            min-height: 30px;
-        }
-        QLabel {
-            font-size: 11px;
-        }
-        QTableWidget {
-            font-size: 11px;
-        }
-        QHeaderView::section {
-            font-size: 11px;
-            padding: 10px;
-        }
-        QTabWidget::pane {
-            border-radius: 8px;
-            margin-top: 5px;
-        }
-        QTabBar::tab {
-            min-width: 180px;
-            padding: 12px 16px;
-            font-size: 13px;
-        }
-        QProgressBar {
-            font-size: 10px;
-        }
-        """
-        
-        scaled_stylesheet = self.get_scaled_stylesheet(base_stylesheet)
-        self.setStyleSheet(scaled_stylesheet)
+        """No-op: Styles are handled by main.qss"""
+        pass
+
     
     def show_excel_instructions(self):
         """عرض تعليمات ملف Excel"""
@@ -609,36 +413,8 @@ class DataManagementTab(ModernWidget):
         children_table.setSortingEnabled(True)
         children_table.setContextMenuPolicy(Qt.CustomContextMenu)
         children_table.customContextMenuRequested.connect(self.show_context_menu)
-        children_table.setStyleSheet("""
-            QTableWidget {
-                background-color: #2c3e50;
-                alternate-background-color: #34495e;
-                selection-background-color: #3498db;
-                border: 1px solid #34495e;
-                border-radius: 6px;
-                gridline-color: #34495e;
-                font-size: 11px;
-                color: #ecf0f1;
-            }
-            QTableWidget::item {
-                padding: 8px;
-                border-bottom: 1px solid #34495e;
-                color: #ecf0f1;
-            }
-            QTableWidget::item:selected {
-                background-color: #3498db;
-                color: white;
-            }
-            QHeaderView::section {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #1a1a2e, stop: 1 #16213e);
-                color: white;
-                padding: 10px;
-                border: 1px solid #0f3460;
-                font-weight: bold;
-                font-size: 11px;
-            }
-        """)
+        children_table.setStyleSheet("")
+
         
         # ضبط أبعاد الأعمدة
         children_table.setColumnWidth(0, 80)   # الكود

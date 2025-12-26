@@ -24,3 +24,5 @@ utils/__pycache__/style_manager.cpython-311.pyc
 backups/database_backup_20251227_001322.json
 backups/database_backup_20251227_010811.json
 backups/database_backup_20251227_010819.json
+data/current_session.json
+data/database.json

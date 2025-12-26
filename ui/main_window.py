@@ -14,6 +14,7 @@ from .data_management import DataManagementTab
 from .early_arrival import EarlyArrivalTab
 from .attendance_report import AttendanceReportTab
 from .comparison_report import ComparisonReportTab
+from .dashboard_tab import DashboardTab
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -54,6 +55,10 @@ class MainWindow(QMainWindow):
         # تبويب التسجيل (كان يسمى MainWindow سابقاً)
         self.registration_tab = RegistrationTab()
         self.tabs.addTab(self.registration_tab, "𓃭 التسجيل اليومي")
+        
+        # تبويب لوحة البيانات (Dashboard)
+        self.dashboard_tab = DashboardTab()
+        self.tabs.addTab(self.dashboard_tab, "📈 لوحة البيانات")
        
         # تبويب الغياب
         self.absence_tab = AbsenceTab()
@@ -166,7 +171,8 @@ class MainWindow(QMainWindow):
                 (self.data_tab, 'load_children_data'),
                 (self.early_arrival_tab, 'refresh_data'),
                 (self.attendance_report_tab, 'refresh_data'),
-                (self.comparison_report_tab, 'refresh_data')
+                (self.comparison_report_tab, 'refresh_data'),
+                (self.dashboard_tab, 'load_children_data')
             ]
             
             for tab, method_name in refresh_operations:

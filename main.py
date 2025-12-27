@@ -28,8 +28,20 @@ def main():
     # تطبيق التنسيقات
     StyleManager.apply_styles(app)
     
-    # تعيين خط افتراضي
-    font = QFont("Segoe UI", 9)
+    # تحميل الخطوط المخصصة من مجلد fonts (اختياري)
+    from PyQt5.QtGui import QFontDatabase
+    font_files = [
+        "fonts/TufuliArabicDEMO-Regular.otf",
+        "fonts/TufuliArabicDEMO-Bold.otf",
+        "fonts/TufuliArabicDEMO-Light.otf"
+    ]
+    for font_file in font_files:
+        if os.path.exists(font_file):
+            QFontDatabase.addApplicationFont(font_file)
+    
+    # استخدام Segoe UI لأنه يدعم الأرقام الغربية بشكل صحيح
+    font = QFont("Segoe UI", 10)
+    font.setStyleStrategy(QFont.PreferAntialias)
     app.setFont(font)
     
     window = MainWindow()

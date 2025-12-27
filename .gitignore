@@ -37,3 +37,5 @@ backups
 data/
 data/current_session.json
 data/database.json
+./data/*
+./backups/*

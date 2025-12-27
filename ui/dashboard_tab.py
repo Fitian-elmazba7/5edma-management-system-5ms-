@@ -1,6 +1,7 @@
+# dashboard_tab.py - Dashboard Grid Layout with Stats and Charts
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, 
                              QLabel, QPushButton, QGroupBox, QComboBox, 
-                             QCompleter, QTextEdit, QScrollArea)
+                             QCompleter, QTextEdit, QScrollArea, QFrame)
 from PyQt5.QtCore import Qt
 from utils.database import DatabaseManager
 from .modern_widget import ModernWidget
@@ -28,68 +29,153 @@ class DashboardTab(ModernWidget):
         self.apply_scaled_stylesheet()
         
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSpacing(10)
+        main_layout = QVBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # --- Search Section ---
-        search_group = QGroupBox("🔍 بحث عن طفل")
-        search_layout = QHBoxLayout()
+        # ═══════════════════════════════════════════════════════════════
+        # ROW 1: SEARCH CARD (Full Width)
+        # ═══════════════════════════════════════════════════════════════
+        search_card = QFrame()
+        search_card.setProperty("class", "dashboard-card")
+        search_card_layout = QVBoxLayout(search_card)
+        search_card_layout.setSpacing(16)
+        search_card_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Header
+        header_row = QHBoxLayout()
+        header_icon = QLabel("🔍")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("بحث عن طفل")
+        header_title.setProperty("class", "card-title")
+        header_row.addWidget(header_icon)
+        header_row.addWidget(header_title)
+        header_row.addStretch()
+        search_card_layout.addLayout(header_row)
+        
+        # Separator
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        search_card_layout.addWidget(sep)
+        
+        # Search Inputs Row
+        search_row = QHBoxLayout()
+        search_row.setSpacing(16)
         
         # Code Input
+        code_label = QLabel("الكود:")
+        code_label.setProperty("class", "input-label")
         self.code_input = QLineEdit()
         self.code_input.setPlaceholderText("كود الطفل...")
-        self.code_input.setMaximumWidth(150)
+        self.code_input.setProperty("class", "dashboard-input")
+        self.code_input.setMinimumHeight(44)
+        self.code_input.setMaximumWidth(180)
         self.code_input.returnPressed.connect(self.search_by_code)
         
-        self.search_code_btn = QPushButton("بحث بالكود")
+        self.search_code_btn = QPushButton("بحث")
         self.search_code_btn.clicked.connect(self.search_by_code)
-        self.search_code_btn.setProperty("class", "btn-primary")
+        self.search_code_btn.setProperty("class", "btn-success")
+        self.search_code_btn.setMinimumHeight(44)
         
         # Name Input
+        name_label = QLabel("الاسم:")
+        name_label.setProperty("class", "input-label")
         self.name_input = QComboBox()
         self.name_input.setEditable(True)
         self.name_input.setPlaceholderText("اسم الطفل...")
+        self.name_input.setProperty("class", "dashboard-combo")
+        self.name_input.setMinimumHeight(44)
         self.name_input.setMinimumWidth(300)
-        
-        # Connect name search
         self.name_input.lineEdit().returnPressed.connect(self.search_by_name)
         
-        self.search_name_btn = QPushButton("بحث بالاسم")
+        self.search_name_btn = QPushButton("بحث")
         self.search_name_btn.clicked.connect(self.search_by_name)
-        self.search_name_btn.setProperty("class", "btn-primary")
+        self.search_name_btn.setProperty("class", "btn-secondary")
+        self.search_name_btn.setMinimumHeight(44)
         
-        search_layout.addWidget(QLabel("الكود:"))
-        search_layout.addWidget(self.code_input)
-        search_layout.addWidget(self.search_code_btn)
-        search_layout.addWidget(QLabel("الاسم:"))
-        search_layout.addWidget(self.name_input)
-        search_layout.addWidget(self.search_name_btn)
-        search_layout.addStretch()
+        search_row.addWidget(code_label)
+        search_row.addWidget(self.code_input)
+        search_row.addWidget(self.search_code_btn)
+        search_row.addSpacing(20)
+        search_row.addWidget(name_label)
+        search_row.addWidget(self.name_input, 1)
+        search_row.addWidget(self.search_name_btn)
         
-        search_group.setLayout(search_layout)
-        layout.addWidget(search_group)
+        search_card_layout.addLayout(search_row)
+        main_layout.addWidget(search_card)
         
-        # --- Content Section ---
-        content_layout = QHBoxLayout()
+        # ═══════════════════════════════════════════════════════════════
+        # ROW 2: INFO CARD + STATS CARD (2 columns)
+        # ═══════════════════════════════════════════════════════════════
+        content_row = QHBoxLayout()
+        content_row.setSpacing(16)
         
-        # Left Side: Child Info
+        # LEFT: Child Info Card
+        info_card = QFrame()
+        info_card.setProperty("class", "dashboard-card")
+        info_card_layout = QVBoxLayout(info_card)
+        info_card_layout.setSpacing(12)
+        info_card_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Header
+        info_header = QHBoxLayout()
+        info_icon = QLabel("📋")
+        info_icon.setProperty("class", "card-icon")
+        info_title = QLabel("بيانات الطفل")
+        info_title.setProperty("class", "card-title")
+        info_header.addWidget(info_icon)
+        info_header.addWidget(info_title)
+        info_header.addStretch()
+        info_card_layout.addLayout(info_header)
+        
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        info_card_layout.addWidget(sep2)
+        
         self.info_display = QTextEdit()
         self.info_display.setReadOnly(True)
-        self.info_display.setMaximumWidth(400)
+        self.info_display.setProperty("class", "info-display")
+        info_card_layout.addWidget(self.info_display, 1)
         
-        # Right Side: Stats & Graphs
+        content_row.addWidget(info_card, 1)
+        
+        # RIGHT: Stats & Graphs Container
+        self.stats_card = QFrame()
+        self.stats_card.setProperty("class", "dashboard-card")
+        stats_card_layout = QVBoxLayout(self.stats_card)
+        stats_card_layout.setSpacing(12)
+        stats_card_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Header
+        stats_header = QHBoxLayout()
+        stats_icon = QLabel("📊")
+        stats_icon.setProperty("class", "card-icon")
+        stats_title = QLabel("إحصائيات الحضور")
+        stats_title.setProperty("class", "card-title")
+        stats_header.addWidget(stats_icon)
+        stats_header.addWidget(stats_title)
+        stats_header.addStretch()
+        stats_card_layout.addLayout(stats_header)
+        
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        stats_card_layout.addWidget(sep3)
+        
+        # Stats Container (will be populated dynamically)
         self.stats_container = QWidget()
         self.stats_layout = QVBoxLayout(self.stats_container)
         self.stats_layout.setAlignment(Qt.AlignTop)
+        self.stats_layout.setContentsMargins(0, 0, 0, 0)
+        stats_card_layout.addWidget(self.stats_container, 1)
         
-        content_layout.addWidget(self.info_display)
-        content_layout.addWidget(self.stats_container)
-        content_layout.setStretch(0, 1) # Info takes 1 part
-        content_layout.setStretch(1, 2) # Stats takes 2 parts
+        content_row.addWidget(self.stats_card, 2)
         
-        layout.addLayout(content_layout)
+        main_layout.addLayout(content_row, 1)
         
-        self.setLayout(layout)
+        self.setLayout(main_layout)
         
     def load_children_data(self):
         """Load children data for autocomplete"""
@@ -120,10 +206,9 @@ class DashboardTab(ModernWidget):
         child = self.db.get_child_by_code(code)
         if child:
             self.display_child(child)
-            # Sync name input
             self.name_input.setCurrentText(child.get('name', ''))
         else:
-            self.info_display.setText("⚠️ الكود غير موجود")
+            self.info_display.setHtml("<div dir='rtl' style='color: #f59e0b; text-align: center; padding: 30px;'>⚠️ الكود غير موجود</div>")
             self.clear_stats()
 
     def search_by_name(self):
@@ -131,12 +216,9 @@ class DashboardTab(ModernWidget):
         if not name:
             return
             
-        # Try exact match first
         child = self.name_to_child_map.get(name)
         
         if not child:
-            # Try finding by looking up in values
-            # (Simple fallback, typically the completer handles selection)
             for c_name, c_data in self.name_to_child_map.items():
                 if name in c_name:
                     child = c_data
@@ -144,10 +226,9 @@ class DashboardTab(ModernWidget):
         
         if child:
             self.display_child(child)
-            # Sync code input
             self.code_input.setText(str(child.get('code', '')))
         else:
-            self.info_display.setText("⚠️ الاسم غير موجود")
+            self.info_display.setHtml("<div dir='rtl' style='color: #f59e0b; text-align: center; padding: 30px;'>⚠️ الاسم غير موجود</div>")
             self.clear_stats()
 
     def display_child(self, child):
@@ -157,28 +238,30 @@ class DashboardTab(ModernWidget):
 
     def show_child_details(self, child):
         details = f"""
-<div style="font-family: Arial; font-size: 14px; line-height: 1.6;">
-<div style="background: #8e44ad; color: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-size: 18px;">
-<strong>{child.get('name', 'غير محدد')}</strong>
+<div dir="rtl" style="font-family: 'Segoe UI'; color: #e2e8f0; line-height: 1.8; text-align: right;">
+<div style="background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 14px; border-radius: 10px; text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+{child.get('name', 'غير محدد')}
 </div>
-
-<p><strong>الكود:</strong> {child.get('code', '-')}</p>
-<p><strong>الصف:</strong> {child.get('class', '-')}</p>
-<p><strong>المدرسة:</strong> {child.get('المدرسه', '-')}</p>
-<p><strong>المنطقة:</strong> {child.get('region', '-')}</p>
-<hr>
-<p><strong>موبايل الولد:</strong> {child.get('موبيل الولد', '-')}</p>
-<p><strong>موبايل الأب:</strong> {child.get('موبايل الاب', '-')}</p>
-<p><strong>موبايل الأم:</strong> {child.get('موبايل الام', '-')}</p>
-<p><strong>العنوان:</strong> {child.get('address', '-')}</p>
-<hr>
-<p><strong>ملاحظات:</strong><br>{child.get('ملاحظات', '-')}</p>
+<table style="width: 100%; font-size: 13px; text-align: right;">
+<tr><td style="font-weight: 500;">{child.get('code', '-')}</td><td style="color: #94a3b8; padding: 6px 0; width: 100px;">الكود:</td></tr>
+<tr><td>{child.get('class', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">الصف:</td></tr>
+<tr><td>{child.get('المدرسه', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">المدرسة:</td></tr>
+<tr><td>{child.get('region', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">المنطقة:</td></tr>
+<tr><td colspan="2" style="border-top: 1px solid #1e1e2e; padding-top: 10px;"></td></tr>
+<tr><td>{child.get('موبيل الولد', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">موبايل الولد:</td></tr>
+<tr><td>{child.get('موبايل الاب', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">موبايل الأب:</td></tr>
+<tr><td>{child.get('موبايل الام', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">موبايل الأم:</td></tr>
+<tr><td>{child.get('address', '-')}</td><td style="color: #94a3b8; padding: 6px 0;">العنوان:</td></tr>
+</table>
+<div style="margin-top: 12px; padding: 10px; background: #1e1e2e; border-radius: 8px; text-align: right;">
+<span style="color: #94a3b8;">ملاحظات:</span><br>
+<span style="color: #e2e8f0;">{child.get('ملاحظات', '-')}</span>
+</div>
 </div>
 """
         self.info_display.setHtml(details)
 
     def clear_stats(self):
-        # Remove existing widgets in stats layout
         while self.stats_layout.count():
             item = self.stats_layout.takeAt(0)
             widget = item.widget()
@@ -199,7 +282,7 @@ class DashboardTab(ModernWidget):
         if not child:
             return
 
-        # Calculate Stats (Logic from ChildDetailsDialog)
+        # Calculate Stats
         all_dates = self.db.get_attendance_dates()
         total_days = len(all_dates)
         present_days = 0
@@ -208,9 +291,8 @@ class DashboardTab(ModernWidget):
         child_code = str(child.get('code', '')).strip()
         
         # Calculate Monthly Stats
-        monthly_stats = {} # Format: "YYYY-MM": {'total': 0, 'present': 0}
+        monthly_stats = {}
         
-        # Initialize months from all dates
         for date_str in all_dates:
             try:
                 date_obj = datetime.strptime(date_str, "%Y-%m-%d")
@@ -221,7 +303,6 @@ class DashboardTab(ModernWidget):
                 
                 monthly_stats[month_key]['total'] += 1
                 
-                # Check attendance
                 attendees = attendance_data.get(date_str, {})
                 if child_code in attendees:
                     monthly_stats[month_key]['present'] += 1
@@ -229,7 +310,6 @@ class DashboardTab(ModernWidget):
             except ValueError:
                 continue
 
-        # Aggregate total present days
         for date_str, attendees in attendance_data.items():
             if child_code in attendees:
                 present_days += 1
@@ -237,94 +317,56 @@ class DashboardTab(ModernWidget):
         absent_days = total_days - present_days
         attendance_percentage = (present_days / total_days * 100) if total_days > 0 else 0
         
-        # Summary Area
-        summary_group = QGroupBox("ملخص الحضور")
-        summary_layout = QHBoxLayout()
+        # Stats Cards Row
+        stats_row = QHBoxLayout()
+        stats_row.setSpacing(12)
         
-        lbl_style = "font-size: 16px; font-weight: bold; padding: 10px; border-radius: 5px;"
+        self.stats_layout.addLayout(stats_row)
         
-        lbl_total = QLabel(f"إجمالي الخدمة:\n{total_days} يوم")
-        lbl_total.setStyleSheet(lbl_style + "background-color: #ecf0f1;")
-        lbl_total.setAlignment(Qt.AlignCenter)
-        
-        lbl_present = QLabel(f"حضور:\n{present_days} يوم")
-        lbl_present.setStyleSheet(lbl_style + "background-color: #d5f5e3; color: #2ecc71;")
-        lbl_present.setAlignment(Qt.AlignCenter)
-        
-        lbl_absent = QLabel(f"غياب:\n{absent_days} يوم")
-        lbl_absent.setStyleSheet(lbl_style + "background-color: #fadbd8; color: #e74c3c;")
-        lbl_absent.setAlignment(Qt.AlignCenter)
-        
-        lbl_percent = QLabel(f"النسبة:\n{attendance_percentage:.1f}%")
-        lbl_percent.setStyleSheet(lbl_style + "background-color: #d6eaf8; color: #3498db;")
-        lbl_percent.setAlignment(Qt.AlignCenter)
-        
-        summary_layout.addWidget(lbl_total)
-        summary_layout.addWidget(lbl_present)
-        summary_layout.addWidget(lbl_absent)
-        summary_layout.addWidget(lbl_percent)
-        
-        summary_group.setLayout(summary_layout)
-        self.stats_layout.addWidget(summary_group)
+        # Create mini stat cards
+        stats_row.addWidget(self.create_mini_stat("إجمالي", str(total_days), "#64748b"))
+        stats_row.addWidget(self.create_mini_stat("حضور", str(present_days), "#22c55e"))
+        stats_row.addWidget(self.create_mini_stat("غياب", str(absent_days), "#ef4444"))
+        stats_row.addWidget(self.create_mini_stat("النسبة", f"{attendance_percentage:.0f}%", "#3b82f6"))
         
         # Graphs Area
         if total_days > 0:
-            graph_group = QGroupBox("الرسوم البيانية (تفاعلية)")
-            graph_layout = QVBoxLayout()
-            
-            # Create Figure - Ensure font supports Arabic
             plt.rcParams['font.family'] = 'Arial'
+            plt.rcParams['axes.facecolor'] = '#141420'
+            plt.rcParams['figure.facecolor'] = '#141420'
+            plt.rcParams['text.color'] = '#e2e8f0'
+            plt.rcParams['axes.labelcolor'] = '#94a3b8'
+            plt.rcParams['xtick.color'] = '#64748b'
+            plt.rcParams['ytick.color'] = '#64748b'
             
-            figure = Figure(figsize=(8, 8), dpi=100)
+            figure = Figure(figsize=(8, 6), dpi=100, facecolor='#141420')
             canvas = FigureCanvas(figure)
             
-            # Toolbar
-            toolbar = NavigationToolbar(canvas, self)
-            graph_layout.addWidget(toolbar)
+            gs = figure.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
             
-            # 1. Pie Chart
-            ax1 = figure.add_subplot(221) 
+            # Pie Chart
+            ax1 = figure.add_subplot(gs[0, 0])
+            ax1.set_facecolor('#141420')
             labels = [self.fix_text('حضور'), self.fix_text('غياب')]
             sizes = [present_days, absent_days]
-            colors = ['#2ecc71', '#e74c3c']
-            explode = (0.1, 0)
-            ax1.pie(sizes, explode=explode, labels=labels, colors=colors,
-                   autopct='%1.1f%%', shadow=True, startangle=90)
-            ax1.set_title(self.fix_text("نسبة الحضور الإجمالية"))
+            colors = ['#22c55e', '#ef4444']
+            ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.0f%%', startangle=90,
+                   textprops={'color': '#e2e8f0'})
+            ax1.set_title(self.fix_text("نسبة الحضور"), color='#e2e8f0')
             
-            # 2. Bar Chart (Total vs Present)
-            ax2 = figure.add_subplot(222)
-            categories = [self.fix_text('إجمالي الأيام'), self.fix_text('أيام الحضور')]
-            values = [total_days, present_days]
-            bar_colors = ['#95a5a6', '#2ecc71']
-            ax2.bar(categories, values, color=bar_colors)
-            ax2.set_title(self.fix_text("مقارنة الحضور"))
-            ax2.set_ylabel(self.fix_text("عدد الأيام"))
-            
-            # 3. Monthly Trend (Line Chart)
-            ax3 = figure.add_subplot(212) # Bottom row, spanning both columns (conceptually, though subplot grid logic varies)
-            # To strictly span, usually we use GridSpec, but 212 works well for "2 rows, 1 solumn, index 2" in a different grid concept.
-            # But mixing 22x and 21x can be tricky in simple logic.
-            # Let's use GridSpec for cleaner layout
-            
-            figure.clear()
-            gs = figure.add_gridspec(2, 2)
-            
-            # Re-add Pie
-            ax1 = figure.add_subplot(gs[0, 0])
-            ax1.pie(sizes, explode=explode, labels=labels, colors=colors,
-                   autopct='%1.1f%%', shadow=True, startangle=90)
-            ax1.set_title(self.fix_text("نسبة الحضور الإجمالية"))
-            
-            # Re-add Bar
+            # Bar Chart
             ax2 = figure.add_subplot(gs[0, 1])
+            ax2.set_facecolor('#141420')
+            categories = [self.fix_text('إجمالي'), self.fix_text('حضور')]
+            values = [total_days, present_days]
+            bar_colors = ['#64748b', '#22c55e']
             ax2.bar(categories, values, color=bar_colors)
-            ax2.set_title(self.fix_text("مقارنة الحضور"))
+            ax2.set_title(self.fix_text("مقارنة"), color='#e2e8f0')
             
             # Monthly Trend
-            ax3 = figure.add_subplot(gs[1, :]) # Span entire bottom row
+            ax3 = figure.add_subplot(gs[1, :])
+            ax3.set_facecolor('#141420')
             
-            # Prepare data for line chart
             sorted_months = sorted(monthly_stats.keys())
             x_months = []
             y_percents = []
@@ -336,27 +378,41 @@ class DashboardTab(ModernWidget):
                 y_percents.append(pct)
             
             if x_months:
-                ax3.plot(x_months, y_percents, marker='o', linestyle='-', color='#3498db', linewidth=2)
-                ax3.set_title(self.fix_text("تطور نسبة الحضور شهرياً"))
-                ax3.set_ylabel(self.fix_text("نسبة الحضور %"))
-                ax3.set_xlabel(self.fix_text("الشهر"))
-                ax3.grid(True, linestyle='--', alpha=0.7)
-                
-                # Rotate x labels if many
+                ax3.plot(x_months, y_percents, marker='o', linestyle='-', color='#3b82f6', linewidth=2)
+                ax3.fill_between(x_months, y_percents, alpha=0.2, color='#3b82f6')
+                ax3.set_title(self.fix_text("تطور الحضور شهرياً"), color='#e2e8f0')
+                ax3.grid(True, linestyle='--', alpha=0.3, color='#334155')
                 plt.setp(ax3.get_xticklabels(), rotation=45, ha="right")
-            else:
-                ax3.text(0.5, 0.5, self.fix_text("لا توجد بيانات شهرية كافية"), 
-                        horizontalalignment='center', verticalalignment='center', transform=ax3.transAxes)
-
-            figure.tight_layout()
             
-            graph_layout.addWidget(canvas)
-            graph_group.setLayout(graph_layout)
-            self.stats_layout.addWidget(graph_group)
+            self.stats_layout.addWidget(canvas)
         else:
-            self.stats_layout.addWidget(QLabel("لا توجد بيانات كافية لعرض الرسوم البيانية"))
+            no_data = QLabel("لا توجد بيانات كافية")
+            no_data.setProperty("class", "stat-subtitle")
+            no_data.setAlignment(Qt.AlignCenter)
+            self.stats_layout.addWidget(no_data)
             
         self.stats_layout.addStretch()
+
+    def create_mini_stat(self, title, value, color):
+        """Create a mini stat card"""
+        card = QFrame()
+        card.setProperty("class", "stat-card")
+        layout = QVBoxLayout(card)
+        layout.setSpacing(4)
+        layout.setContentsMargins(16, 12, 16, 12)
+        
+        value_lbl = QLabel(value)
+        value_lbl.setStyleSheet(f"font-size: 24px; font-weight: 700; color: {color};")
+        value_lbl.setAlignment(Qt.AlignCenter)
+        
+        title_lbl = QLabel(title)
+        title_lbl.setProperty("class", "stat-subtitle")
+        title_lbl.setAlignment(Qt.AlignCenter)
+        
+        layout.addWidget(value_lbl)
+        layout.addWidget(title_lbl)
+        
+        return card
 
     def apply_scaled_stylesheet(self):
         pass

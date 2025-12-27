@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QMessageBox, QFileDialog, QGroupBox, QLabel,
                              QTextEdit, QProgressBar, QSplitter, QTabWidget,
                              QMenu, QAction, QLineEdit, QDialog, QFormLayout,
-                             QDialogButtonBox, QComboBox, QCheckBox)
+                             QDialogButtonBox, QComboBox, QCheckBox, QFrame)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -254,139 +254,192 @@ class DataManagementTab(ModernWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Actions
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(300)
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setSpacing(14)
+        left_layout.setContentsMargins(20, 20, 20, 20)
         
-        # اللوحة اليسرى: التحكم والإحصائيات
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Header
+        header = QHBoxLayout()
+        header_icon = QLabel("𓃍")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("إدارة البيانات")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
+        left_layout.addLayout(header)
         
-        # مجموعة الاستيراد
-        import_group = QGroupBox("𓃍 استيراد البيانات من Excel")
-
-        import_layout = QVBoxLayout()
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        left_layout.addWidget(sep)
         
-        self.import_btn = QPushButton("📥 استيراد بيانات الكنيسة")
-        self.analyze_btn = QPushButton("🔍 تحليل ملف Excel")
+        # Import Section
+        import_label = QLabel("📥 الاستيراد")
+        import_label.setProperty("class", "input-label")
+        left_layout.addWidget(import_label)
         
-        # إضافة خيار الاستيراد التزايدي
-        self.incremental_import = QCheckBox("استيراد تزايدي (إضافة بيانات جديدة فقط)")
-        self.incremental_import.setChecked(True)
-        self.incremental_import.setStyleSheet("")
-
-        
-        # زر تعليمات Excel الجديد
-        self.instructions_btn = QPushButton("📋 تعليمات ملف Excel")
-        self.instructions_btn.setProperty("class", "btn-purple")
-
-        
-        for btn in [self.import_btn, self.analyze_btn]:
-             btn.setProperty("class", "default")
-
-        
+        self.import_btn = QPushButton("📥 استيراد من Excel")
+        self.import_btn.setProperty("class", "btn-success")
+        self.import_btn.setMinimumHeight(40)
         self.import_btn.clicked.connect(self.import_from_excel)
+        left_layout.addWidget(self.import_btn)
+        
+        self.analyze_btn = QPushButton("🔍 تحليل ملف")
+        self.analyze_btn.setProperty("class", "btn-secondary")
         self.analyze_btn.clicked.connect(self.analyze_excel)
+        left_layout.addWidget(self.analyze_btn)
+        
+        self.incremental_import = QCheckBox("استيراد تزايدي")
+        self.incremental_import.setChecked(True)
+        left_layout.addWidget(self.incremental_import)
+        
+        self.instructions_btn = QPushButton("📋 تعليمات Excel")
+        self.instructions_btn.setProperty("class", "btn-purple")
         self.instructions_btn.clicked.connect(self.show_excel_instructions)
+        left_layout.addWidget(self.instructions_btn)
         
-        import_layout.addWidget(self.import_btn)
-        import_layout.addWidget(self.analyze_btn)
-        import_layout.addWidget(self.incremental_import)
-        import_layout.addWidget(self.instructions_btn)
-        import_group.setLayout(import_layout)
-        
-        # شريط التقدم
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
-        self.progress_bar.setStyleSheet("")
-
-        
-        # مجموعة الإحصائيات
-        stats_group = QGroupBox("𓃎 الإحصائيات")
-
-        stats_layout = QVBoxLayout()
-        
-        self.total_label = QLabel("👥 إجمالي الأطفال: 0")
-        self.class1_label = QLabel("📚 الصف الأول: 0 طفل")
-        self.class2_label = QLabel("📚 الصف الثاني: 0 طفل") 
-        self.class3_label = QLabel("📚 الصف الثالث: 0 طفل")
-        
-        for label in [self.total_label, self.class1_label, self.class2_label, self.class3_label]:
-            label.setProperty("class", "info-label")
-            stats_layout.addWidget(label)
-
-        
-        stats_group.setLayout(stats_layout)
-        
-        # مجموعة الإجراءات
-        actions_group = QGroupBox("𓃰 الإجراءات")
-
-        actions_layout = QVBoxLayout()
-        
-        self.add_btn = QPushButton("➕ إضافة طفل جديد")
-        self.export_btn = QPushButton("📤 تصدير البيانات")
-        self.export_modified_btn = QPushButton("📥 تصدير البيانات المعدلة")  # زر جديد
-        self.refresh_btn = QPushButton("🔄 تحديث البيانات")
-        
-        for btn in [self.add_btn, self.export_btn, self.export_modified_btn, self.refresh_btn]:
-            btn.setProperty("class", "default")
-
-        
-        self.add_btn.clicked.connect(self.add_child)
-        self.export_btn.clicked.connect(self.export_to_excel)
-        self.export_modified_btn.clicked.connect(self.export_modified_data)  # ربط الزر الجديد
-        self.refresh_btn.clicked.connect(self.load_children_data)
-        
-        actions_layout.addWidget(self.add_btn)
-        actions_layout.addWidget(self.export_btn)
-        actions_layout.addWidget(self.export_modified_btn)  # إضافة الزر الجديد
-        actions_layout.addWidget(self.refresh_btn)
-        actions_group.setLayout(actions_layout)
-        
-        left_layout.addWidget(import_group)
         left_layout.addWidget(self.progress_bar)
-        left_layout.addWidget(stats_group)
-        left_layout.addWidget(actions_group)
+        
+        # Separator
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        left_layout.addWidget(sep2)
+        
+        # Stats Section
+        stats_label = QLabel("📊 الإحصائيات")
+        stats_label.setProperty("class", "input-label")
+        left_layout.addWidget(stats_label)
+        
+        self.total_label = self.create_stat_frame("👥 الإجمالي", "0")
+        self.class1_label = self.create_stat_frame("📚 الصف الأول", "0")
+        self.class2_label = self.create_stat_frame("📚 الصف الثاني", "0")
+        self.class3_label = self.create_stat_frame("📚 الصف الثالث", "0")
+        
+        left_layout.addWidget(self.total_label)
+        left_layout.addWidget(self.class1_label)
+        left_layout.addWidget(self.class2_label)
+        left_layout.addWidget(self.class3_label)
+        
+        # Separator
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        left_layout.addWidget(sep3)
+        
+        # Actions Section
+        actions_label = QLabel("⚡ الإجراءات")
+        actions_label.setProperty("class", "input-label")
+        left_layout.addWidget(actions_label)
+        
+        self.add_btn = QPushButton("➕ إضافة طفل")
+        self.add_btn.setProperty("class", "btn-success")
+        self.add_btn.setMinimumHeight(38)
+        self.add_btn.clicked.connect(self.add_child)
+        left_layout.addWidget(self.add_btn)
+        
+        self.export_btn = QPushButton("📤 تصدير البيانات")
+        self.export_btn.setProperty("class", "btn-secondary")
+        self.export_btn.clicked.connect(self.export_to_excel)
+        left_layout.addWidget(self.export_btn)
+        
+        self.export_modified_btn = QPushButton("📥 تصدير المعدلة")
+        self.export_modified_btn.setProperty("class", "btn-secondary")
+        self.export_modified_btn.clicked.connect(self.export_modified_data)
+        left_layout.addWidget(self.export_modified_btn)
+        
+        self.refresh_btn = QPushButton("🔄 تحديث")
+        self.refresh_btn.setProperty("class", "btn-icon")
+        self.refresh_btn.clicked.connect(self.load_children_data)
+        left_layout.addWidget(self.refresh_btn)
+        
         left_layout.addStretch()
+        main_layout.addWidget(left_panel)
         
-        left_panel.setLayout(left_layout)
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Data Tables
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        # اللوحة اليمنى: عرض البيانات
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
+        # Header
+        table_header = QHBoxLayout()
+        table_icon = QLabel("📊")
+        table_icon.setProperty("class", "card-icon")
+        table_title = QLabel("بيانات الأطفال")
+        table_title.setProperty("class", "card-title")
+        table_header.addWidget(table_icon)
+        table_header.addWidget(table_title)
+        table_header.addStretch()
+        right_layout.addLayout(table_header)
         
-        # تبويبات لعرض البيانات
+        sep4 = QFrame()
+        sep4.setFrameShape(QFrame.HLine)
+        sep4.setProperty("class", "card-separator")
+        right_layout.addWidget(sep4)
+        
+        # Tabs
         self.tabs = QTabWidget()
         
-        # تبويب جميع الأطفال
         self.all_children_tab = QWidget()
-        self.setup_children_table(self.all_children_tab)
-        
-        # تبويب حسب الصفوف
         self.class1_tab = QWidget()
         self.class2_tab = QWidget()
         self.class3_tab = QWidget()
         
-        # إعداد الجداول لكل تبويب
+        self.setup_children_table(self.all_children_tab)
         self.setup_children_table(self.class1_tab)
         self.setup_children_table(self.class2_tab)
         self.setup_children_table(self.class3_tab)
         
-        self.tabs.addTab(self.all_children_tab, "👥 جميع الأطفال")
-        self.tabs.addTab(self.class1_tab, "📚 الصف الأول")
-        self.tabs.addTab(self.class2_tab, "📚 الصف الثاني")
-        self.tabs.addTab(self.class3_tab, "📚 الصف الثالث")
+        self.tabs.addTab(self.all_children_tab, "👥 الكل")
+        self.tabs.addTab(self.class1_tab, "📚 الأول")
+        self.tabs.addTab(self.class2_tab, "📚 الثاني")
+        self.tabs.addTab(self.class3_tab, "📚 الثالث")
         
-        right_layout.addWidget(self.tabs)
-        right_panel.setLayout(right_layout)
+        right_layout.addWidget(self.tabs, 1)
         
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([350, 650])
-        
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(right_panel, 1)
         self.setLayout(main_layout)
+    
+    def create_stat_frame(self, label_text, value_text):
+        """Create a stat frame widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
+        
+        lbl = QLabel(label_text)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value_text)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_frame(self, frame, value):
+        """Update stat frame value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
     
     def apply_scaled_stylesheet(self):
         """No-op: Styles are handled by main.qss"""
@@ -598,10 +651,10 @@ class DataManagementTab(ModernWidget):
         class2 = len([c for c in children if c.get('class') == 'الصف الثاني'])
         class3 = len([c for c in children if c.get('class') == 'الصف الثالث'])
         
-        self.total_label.setText(f"👥 إجمالي الأطفال: {total}")
-        self.class1_label.setText(f"📚 الصف الأول: {class1} طفل")
-        self.class2_label.setText(f"📚 الصف الثاني: {class2} طفل")
-        self.class3_label.setText(f"📚 الصف الثالث: {class3} طفل")
+        self.update_stat_frame(self.total_label, total)
+        self.update_stat_frame(self.class1_label, class1)
+        self.update_stat_frame(self.class2_label, class2)
+        self.update_stat_frame(self.class3_label, class3)
     
     def import_from_excel(self):
         file_path, _ = QFileDialog.getOpenFileName(

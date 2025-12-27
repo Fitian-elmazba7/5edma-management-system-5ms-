@@ -29,14 +29,14 @@ class RegistrationTab(ModernWidget):
     
     def setup_ui(self):
         layout = QVBoxLayout()
-        layout.setSpacing(10)
+        layout.setSpacing(12)
+        layout.setContentsMargins(16, 16, 16, 16)
         
         # مجموعة إدخال الكود أو الاسم
         input_group = QGroupBox("🎯 إدخال كود أو اسم الطفل")
-        # مجموعة إدخال الكود أو الاسم
-        input_group = QGroupBox("🎯 إدخال كود أو اسم الطفل")
-
         input_layout = QVBoxLayout()
+        input_layout.setSpacing(10)
+        input_layout.setContentsMargins(12, 16, 12, 12)
         
         # إدخال الكود
         code_layout = QHBoxLayout()
@@ -84,10 +84,9 @@ class RegistrationTab(ModernWidget):
         
         # مجموعة البحث في الجلسة الحالية
         search_group = QGroupBox("🔍 بحث في الجلسة الحالية")
-        # مجموعة البحث في الجلسة الحالية
-        search_group = QGroupBox("🔍 بحث في الجلسة الحالية")
-
         search_layout = QVBoxLayout()
+        search_layout.setSpacing(8)
+        search_layout.setContentsMargins(12, 16, 12, 12)
 
         search_input_layout = QHBoxLayout()
         self.session_search_input = QLineEdit()
@@ -135,6 +134,8 @@ class RegistrationTab(ModernWidget):
         
         # أزرار التحكم
         control_layout = QHBoxLayout()
+        control_layout.setSpacing(8)
+        control_layout.setContentsMargins(0, 8, 0, 0)
         self.finish_btn = QPushButton("✅ إنهاء الجلسة ومسح البيانات")
         self.finish_btn.setProperty("class", "btn-success")
 

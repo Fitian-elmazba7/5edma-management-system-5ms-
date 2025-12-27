@@ -115,7 +115,8 @@ class MainWindow(QMainWindow):
         top_frame.setFixedHeight(70)
         
         top_layout = QHBoxLayout()
-        top_layout.setContentsMargins(15, 5, 15, 5)
+        top_layout.setContentsMargins(16, 8, 16, 8)
+        top_layout.setSpacing(16)
         
         # عنوان التطبيق
         title_label = QLabel("𓆓 نظام الحضور والغياب - الكنيسة القبطية الأرثوذكسية 𓆓")
@@ -124,12 +125,13 @@ class MainWindow(QMainWindow):
         
         # زر التحديث الشامل
         refresh_layout = QVBoxLayout()
-        refresh_layout.setSpacing(2)
+        refresh_layout.setSpacing(6)
+        refresh_layout.setContentsMargins(0, 0, 0, 0)
         
         self.global_refresh_btn = QPushButton("🔄 تحديث شامل للنظام")
         self.global_refresh_btn.setObjectName("globalRefreshBtn")
         self.global_refresh_btn.setProperty("class", "btn-success")
-        self.global_refresh_btn.setFixedSize(200, 35)
+        self.global_refresh_btn.setFixedSize(180, 36)
         self.global_refresh_btn.setToolTip("تحديث جميع البيانات في جميع أقسام النظام")
         self.global_refresh_btn.clicked.connect(self.refresh_all_tabs)
         

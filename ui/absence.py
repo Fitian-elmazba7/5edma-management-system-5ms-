@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QTableWidget, QTableWidgetItem, QHeaderView,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
                              QTabWidget, QProgressBar, QSplitter, QFrame,
-                             QCheckBox)
+                             QCheckBox, QScrollArea)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon, QFont
 from utils.database import DatabaseManager
@@ -32,12 +32,9 @@ class AbsenceTab(QWidget):
         left_panel = QFrame()
         left_panel.setProperty("class", "dashboard-card")
         left_panel.setFixedWidth(320)
-        left_layout = QVBoxLayout(left_panel)
-        left_layout.setSpacing(16)
-        left_layout.setContentsMargins(20, 20, 20, 20)
-        
         # Header
-        header = QHBoxLayout()
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
         header_icon = QLabel("𓃻")
         header_icon.setProperty("class", "card-icon")
         header_title = QLabel("متابعة الغياب")
@@ -45,45 +42,60 @@ class AbsenceTab(QWidget):
         header.addWidget(header_icon)
         header.addWidget(header_title)
         header.addStretch()
-        left_layout.addLayout(header)
+        
+        # Scroll Area for the rest of the controls
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(16)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Move controls into scroll_layout instead of left_layout
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
         sep = QFrame()
         sep.setFrameShape(QFrame.HLine)
         sep.setProperty("class", "card-separator")
-        left_layout.addWidget(sep)
+        scroll_layout.addWidget(sep)
         
         # Date Selection
         date_section = QLabel("📅 اختر التاريخ")
         date_section.setProperty("class", "input-label")
-        left_layout.addWidget(date_section)
+        scroll_layout.addWidget(date_section)
         
         self.date_selector = QComboBox()
         self.date_selector.setProperty("class", "dashboard-combo")
         self.date_selector.setMinimumHeight(40)
         self.date_selector.currentTextChanged.connect(self.load_absence_data)
-        left_layout.addWidget(self.date_selector)
+        scroll_layout.addWidget(self.date_selector)
         
         self.date_info_label = QLabel("")
         self.date_info_label.setProperty("class", "stat-subtitle")
-        left_layout.addWidget(self.date_info_label)
+        scroll_layout.addWidget(self.date_info_label)
         
         self.service_days_only = QCheckBox("عرض أيام الخدمة فقط")
         self.service_days_only.stateChanged.connect(self.load_dates)
-        left_layout.addWidget(self.service_days_only)
+        scroll_layout.addWidget(self.service_days_only)
         
         # Stats Section
         sep2 = QFrame()
         sep2.setFrameShape(QFrame.HLine)
         sep2.setProperty("class", "card-separator")
-        left_layout.addWidget(sep2)
+        scroll_layout.addWidget(sep2)
         
         stats_label = QLabel("📊 الإحصائيات")
         stats_label.setProperty("class", "input-label")
-        left_layout.addWidget(stats_label)
+        scroll_layout.addWidget(stats_label)
         
         # Stats Cards Grid
-        stats_grid = QVBoxLayout()
-        stats_grid.setSpacing(8)
+        stats_grid_layout = QVBoxLayout()
+        stats_grid_layout.setSpacing(8)
         
         self.total_label = self.create_stat_row("👥 إجمالي الأطفال", "0")
         self.absent_label = self.create_stat_row("❌ الغياب الكلي", "0")
@@ -92,44 +104,47 @@ class AbsenceTab(QWidget):
         self.class2_label = self.create_stat_row("📚 الصف الثاني", "0")
         self.class3_label = self.create_stat_row("📚 الصف الثالث", "0")
         
-        stats_grid.addWidget(self.total_label)
-        stats_grid.addWidget(self.absent_label)
-        stats_grid.addWidget(self.attendance_rate_label)
-        stats_grid.addWidget(self.class1_label)
-        stats_grid.addWidget(self.class2_label)
-        stats_grid.addWidget(self.class3_label)
-        left_layout.addLayout(stats_grid)
+        stats_grid_layout.addWidget(self.total_label)
+        stats_grid_layout.addWidget(self.absent_label)
+        stats_grid_layout.addWidget(self.attendance_rate_label)
+        stats_grid_layout.addWidget(self.class1_label)
+        stats_grid_layout.addWidget(self.class2_label)
+        stats_grid_layout.addWidget(self.class3_label)
+        scroll_layout.addLayout(stats_grid_layout)
         
         # Action Buttons
         sep3 = QFrame()
         sep3.setFrameShape(QFrame.HLine)
         sep3.setProperty("class", "card-separator")
-        left_layout.addWidget(sep3)
+        scroll_layout.addWidget(sep3)
         
         self.server_assignment_btn = QPushButton("👥 توزيع على الخدام")
         self.server_assignment_btn.setProperty("class", "btn-purple")
         self.server_assignment_btn.setMinimumHeight(40)
         self.server_assignment_btn.clicked.connect(self.open_server_assignment)
         self.server_assignment_btn.setEnabled(False)
-        left_layout.addWidget(self.server_assignment_btn)
+        scroll_layout.addWidget(self.server_assignment_btn)
         
         self.refresh_btn = QPushButton("🔄 تحديث")
         self.refresh_btn.setProperty("class", "btn-secondary")
         self.refresh_btn.setMinimumHeight(40)
         self.refresh_btn.clicked.connect(self.refresh_data)
-        left_layout.addWidget(self.refresh_btn)
+        scroll_layout.addWidget(self.refresh_btn)
         
         # Export buttons
         export_label = QLabel("📤 تصدير التقارير")
         export_label.setProperty("class", "input-label")
-        left_layout.addWidget(export_label)
+        scroll_layout.addWidget(export_label)
         
         self.export_all_btn = QPushButton("تصدير الكل")
         self.export_all_btn.setProperty("class", "btn-success")
         self.export_all_btn.clicked.connect(self.export_all_absence)
-        left_layout.addWidget(self.export_all_btn)
+        scroll_layout.addWidget(self.export_all_btn)
         
-        left_layout.addStretch()
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
         main_layout.addWidget(left_panel)
         

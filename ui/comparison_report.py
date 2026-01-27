@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QSplitter, QDateEdit, QProgressBar, QTabWidget,
                              QFrame, QCheckBox, QSpinBox, QLineEdit,
                              QCalendarWidget, QDialog, QDialogButtonBox,
-                             QFormLayout, QRadioButton, QButtonGroup)
+                             QFormLayout, QRadioButton, QButtonGroup, QScrollArea)
 from PyQt5.QtCore import Qt, QDate
 from PyQt5.QtGui import QIcon, QFont, QColor
 from utils.database import DatabaseManager
@@ -173,12 +173,9 @@ class ComparisonReportTab(QWidget):
         left_panel = QFrame()
         left_panel.setProperty("class", "dashboard-card")
         left_panel.setFixedWidth(350)
-        left_layout = QVBoxLayout(left_panel)
-        left_layout.setSpacing(14)
-        left_layout.setContentsMargins(20, 20, 20, 20)
-        
         # Header
-        header = QHBoxLayout()
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
         header_icon = QLabel("📊")
         header_icon.setProperty("class", "card-icon")
         header_title = QLabel("تقرير المقارنة")
@@ -186,75 +183,89 @@ class ComparisonReportTab(QWidget):
         header.addWidget(header_icon)
         header.addWidget(header_title)
         header.addStretch()
-        left_layout.addLayout(header)
+        
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
         sep = QFrame()
         sep.setFrameShape(QFrame.HLine)
         sep.setProperty("class", "card-separator")
-        left_layout.addWidget(sep)
+        scroll_layout.addWidget(sep)
         
         # Period Selection
         period_label = QLabel("⏰ الفترة الزمنية")
         period_label.setProperty("class", "input-label")
-        left_layout.addWidget(period_label)
+        scroll_layout.addWidget(period_label)
         
         self.select_period_btn = QPushButton("📅 اختيار الفترة")
         self.select_period_btn.setProperty("class", "dashboard-combo")
         self.select_period_btn.setMinimumHeight(40)
         self.select_period_btn.clicked.connect(self.select_date_range)
-        left_layout.addWidget(self.select_period_btn)
+        scroll_layout.addWidget(self.select_period_btn)
         
         self.period_label = QLabel("الفترة: غير محدد")
         self.period_label.setProperty("class", "stat-subtitle")
-        left_layout.addWidget(self.period_label)
+        scroll_layout.addWidget(self.period_label)
         
         self.service_days_info = QLabel("أيام الخدمة: الخميس فقط")
         self.service_days_info.setProperty("class", "filter-info-success")
-        left_layout.addWidget(self.service_days_info)
+        scroll_layout.addWidget(self.service_days_info)
         
         # Class Selection
         class_label = QLabel("📚 الصف للمقارنة")
         class_label.setProperty("class", "input-label")
-        left_layout.addWidget(class_label)
+        scroll_layout.addWidget(class_label)
         
         self.class_combo = QComboBox()
         self.class_combo.setProperty("class", "dashboard-combo")
         self.class_combo.addItems(["الكل", "الصف الأول", "الصف الثاني", "الصف الثالث"])
         self.class_combo.currentTextChanged.connect(self.on_class_changed)
-        left_layout.addWidget(self.class_combo)
+        scroll_layout.addWidget(self.class_combo)
         
         # Actions
         sep2 = QFrame()
         sep2.setFrameShape(QFrame.HLine)
         sep2.setProperty("class", "card-separator")
-        left_layout.addWidget(sep2)
+        scroll_layout.addWidget(sep2)
         
         actions_label = QLabel("⚡ الإجراءات")
         actions_label.setProperty("class", "input-label")
-        left_layout.addWidget(actions_label)
+        scroll_layout.addWidget(actions_label)
         
         self.generate_btn = QPushButton("🔍 توليد التقرير")
         self.generate_btn.setProperty("class", "btn-success")
         self.generate_btn.setMinimumHeight(40)
         self.generate_btn.clicked.connect(self.generate_comparison_report)
         self.generate_btn.setEnabled(False)
-        left_layout.addWidget(self.generate_btn)
+        scroll_layout.addWidget(self.generate_btn)
         
         self.export_btn = QPushButton("📤 تصدير التقرير")
         self.export_btn.setProperty("class", "btn-secondary")
         self.export_btn.clicked.connect(self.export_comparison_report)
         self.export_btn.setEnabled(False)
-        left_layout.addWidget(self.export_btn)
+        scroll_layout.addWidget(self.export_btn)
         
         # Stats
         sep3 = QFrame()
         sep3.setFrameShape(QFrame.HLine)
         sep3.setProperty("class", "card-separator")
-        left_layout.addWidget(sep3)
+        scroll_layout.addWidget(sep3)
         
         stats_label = QLabel("📈 الإحصائيات العامة")
         stats_label.setProperty("class", "input-label")
-        left_layout.addWidget(stats_label)
+        scroll_layout.addWidget(stats_label)
         
         self.total_days_label = self.create_stat_frame("📅 عدد الأيام", "0")
         self.total_children_label = self.create_stat_frame("👥 عدد الأطفال", "0")
@@ -262,13 +273,17 @@ class ComparisonReportTab(QWidget):
         self.best_day_label = self.create_stat_frame("⭐ أفضل يوم", "-")
         self.worst_day_label = self.create_stat_frame("⚠️ أسوأ يوم", "-")
         
-        left_layout.addWidget(self.total_days_label)
-        left_layout.addWidget(self.total_children_label)
-        left_layout.addWidget(self.avg_attendance_label)
-        left_layout.addWidget(self.best_day_label)
-        left_layout.addWidget(self.worst_day_label)
+        scroll_layout.addWidget(self.total_days_label)
+        scroll_layout.addWidget(self.total_children_label)
+        scroll_layout.addWidget(self.avg_attendance_label)
+        scroll_layout.addWidget(self.best_day_label)
+        scroll_layout.addWidget(self.worst_day_label)
         
-        left_layout.addStretch()
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
+        
         main_layout.addWidget(left_panel)
         
         # ═══════════════════════════════════════════════════════════════

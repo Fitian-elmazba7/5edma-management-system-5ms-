@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QMessageBox, QFileDialog, QGroupBox, QLabel,
                              QTextEdit, QProgressBar, QSplitter, QTabWidget,
                              QMenu, QAction, QLineEdit, QDialog, QFormLayout,
-                             QDialogButtonBox, QComboBox, QCheckBox, QFrame)
+                             QDialogButtonBox, QComboBox, QCheckBox, QFrame, QScrollArea)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -263,12 +263,9 @@ class DataManagementTab(ModernWidget):
         left_panel = QFrame()
         left_panel.setProperty("class", "dashboard-card")
         left_panel.setFixedWidth(300)
-        left_layout = QVBoxLayout(left_panel)
-        left_layout.setSpacing(14)
-        left_layout.setContentsMargins(20, 20, 20, 20)
-        
         # Header
-        header = QHBoxLayout()
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
         header_icon = QLabel("𓃍")
         header_icon.setProperty("class", "card-icon")
         header_title = QLabel("إدارة البيانات")
@@ -276,96 +273,113 @@ class DataManagementTab(ModernWidget):
         header.addWidget(header_icon)
         header.addWidget(header_title)
         header.addStretch()
-        left_layout.addLayout(header)
+        
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
         sep = QFrame()
         sep.setFrameShape(QFrame.HLine)
         sep.setProperty("class", "card-separator")
-        left_layout.addWidget(sep)
+        scroll_layout.addWidget(sep)
         
         # Import Section
         import_label = QLabel("📥 الاستيراد")
         import_label.setProperty("class", "input-label")
-        left_layout.addWidget(import_label)
+        scroll_layout.addWidget(import_label)
         
         self.import_btn = QPushButton("📥 استيراد من Excel")
         self.import_btn.setProperty("class", "btn-success")
         self.import_btn.setMinimumHeight(40)
         self.import_btn.clicked.connect(self.import_from_excel)
-        left_layout.addWidget(self.import_btn)
+        scroll_layout.addWidget(self.import_btn)
         
         self.analyze_btn = QPushButton("🔍 تحليل ملف")
         self.analyze_btn.setProperty("class", "btn-secondary")
         self.analyze_btn.clicked.connect(self.analyze_excel)
-        left_layout.addWidget(self.analyze_btn)
+        scroll_layout.addWidget(self.analyze_btn)
         
         self.incremental_import = QCheckBox("استيراد تزايدي")
         self.incremental_import.setChecked(True)
-        left_layout.addWidget(self.incremental_import)
+        scroll_layout.addWidget(self.incremental_import)
         
         self.instructions_btn = QPushButton("📋 تعليمات Excel")
         self.instructions_btn.setProperty("class", "btn-purple")
         self.instructions_btn.clicked.connect(self.show_excel_instructions)
-        left_layout.addWidget(self.instructions_btn)
+        scroll_layout.addWidget(self.instructions_btn)
         
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
-        left_layout.addWidget(self.progress_bar)
+        scroll_layout.addWidget(self.progress_bar)
         
         # Separator
         sep2 = QFrame()
         sep2.setFrameShape(QFrame.HLine)
         sep2.setProperty("class", "card-separator")
-        left_layout.addWidget(sep2)
+        scroll_layout.addWidget(sep2)
         
         # Stats Section
         stats_label = QLabel("📊 الإحصائيات")
         stats_label.setProperty("class", "input-label")
-        left_layout.addWidget(stats_label)
+        scroll_layout.addWidget(stats_label)
         
         self.total_label = self.create_stat_frame("👥 الإجمالي", "0")
         self.class1_label = self.create_stat_frame("📚 الصف الأول", "0")
         self.class2_label = self.create_stat_frame("📚 الصف الثاني", "0")
         self.class3_label = self.create_stat_frame("📚 الصف الثالث", "0")
         
-        left_layout.addWidget(self.total_label)
-        left_layout.addWidget(self.class1_label)
-        left_layout.addWidget(self.class2_label)
-        left_layout.addWidget(self.class3_label)
+        scroll_layout.addWidget(self.total_label)
+        scroll_layout.addWidget(self.class1_label)
+        scroll_layout.addWidget(self.class2_label)
+        scroll_layout.addWidget(self.class3_label)
         
         # Separator
         sep3 = QFrame()
         sep3.setFrameShape(QFrame.HLine)
         sep3.setProperty("class", "card-separator")
-        left_layout.addWidget(sep3)
+        scroll_layout.addWidget(sep3)
         
         # Actions Section
         actions_label = QLabel("⚡ الإجراءات")
         actions_label.setProperty("class", "input-label")
-        left_layout.addWidget(actions_label)
+        scroll_layout.addWidget(actions_label)
         
         self.add_btn = QPushButton("➕ إضافة طفل")
         self.add_btn.setProperty("class", "btn-success")
         self.add_btn.setMinimumHeight(38)
         self.add_btn.clicked.connect(self.add_child)
-        left_layout.addWidget(self.add_btn)
+        scroll_layout.addWidget(self.add_btn)
         
         self.export_btn = QPushButton("📤 تصدير البيانات")
         self.export_btn.setProperty("class", "btn-secondary")
         self.export_btn.clicked.connect(self.export_to_excel)
-        left_layout.addWidget(self.export_btn)
+        scroll_layout.addWidget(self.export_btn)
         
         self.export_modified_btn = QPushButton("📥 تصدير المعدلة")
         self.export_modified_btn.setProperty("class", "btn-secondary")
         self.export_modified_btn.clicked.connect(self.export_modified_data)
-        left_layout.addWidget(self.export_modified_btn)
+        scroll_layout.addWidget(self.export_modified_btn)
         
         self.refresh_btn = QPushButton("🔄 تحديث")
         self.refresh_btn.setProperty("class", "btn-icon")
         self.refresh_btn.clicked.connect(self.load_children_data)
-        left_layout.addWidget(self.refresh_btn)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        left_layout.addStretch()
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         main_layout.addWidget(left_panel)
         
         # ═══════════════════════════════════════════════════════════════

@@ -29,8 +29,18 @@ class RegistrationTab(ModernWidget):
         self.apply_scaled_stylesheet()
     
     def setup_ui(self):
+        # Outer Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        # Container Widget
+        container = QWidget()
+        container.setObjectName("registrationContainer")
+        
         # Main vertical layout
-        main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout(container)
         main_layout.setSpacing(16)
         main_layout.setContentsMargins(24, 24, 24, 24)
         
@@ -341,7 +351,12 @@ class RegistrationTab(ModernWidget):
         
         main_layout.addWidget(action_bar)
         
-        self.setLayout(main_layout)
+        scroll.setWidget(container)
+        
+        # Outer layout
+        outer_layout = QVBoxLayout(self)
+        outer_layout.setContentsMargins(0, 0, 0, 0)
+        outer_layout.addWidget(scroll)
     
     def create_stat_card(self, title, value, icon, color):
         """Create a stat card widget"""

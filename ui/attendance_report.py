@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QTableWidget, QTableWidgetItem, QHeaderView,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
-                             QSplitter, QProgressBar, QCheckBox, QFrame)
+                             QSplitter, QProgressBar, QCheckBox, QFrame, QScrollArea)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -35,12 +35,9 @@ class AttendanceReportTab(QWidget):
         left_panel = QFrame()
         left_panel.setProperty("class", "dashboard-card")
         left_panel.setFixedWidth(350)
-        left_layout = QVBoxLayout(left_panel)
-        left_layout.setSpacing(14)
-        left_layout.setContentsMargins(20, 20, 20, 20)
-        
         # Header
-        header = QHBoxLayout()
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
         header_icon = QLabel("𓃭")
         header_icon.setProperty("class", "card-icon")
         header_title = QLabel("تقرير الحضور")
@@ -48,46 +45,60 @@ class AttendanceReportTab(QWidget):
         header.addWidget(header_icon)
         header.addWidget(header_title)
         header.addStretch()
-        left_layout.addLayout(header)
+        
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
         sep = QFrame()
         sep.setFrameShape(QFrame.HLine)
         sep.setProperty("class", "card-separator")
-        left_layout.addWidget(sep)
+        scroll_layout.addWidget(sep)
         
         # Filters
         filter_label = QLabel("📋 إعدادات التقرير")
         filter_label.setProperty("class", "input-label")
-        left_layout.addWidget(filter_label)
+        scroll_layout.addWidget(filter_label)
         
         self.date_selector = QComboBox()
         self.date_selector.setProperty("class", "dashboard-combo")
         self.date_selector.setMinimumHeight(40)
         self.date_selector.currentTextChanged.connect(self.load_attendance_data)
-        left_layout.addWidget(self.date_selector)
+        scroll_layout.addWidget(self.date_selector)
         
         self.service_days_only = QCheckBox("عرض أيام الخدمة فقط")
         self.service_days_only.stateChanged.connect(self.load_dates)
-        left_layout.addWidget(self.service_days_only)
+        scroll_layout.addWidget(self.service_days_only)
         
         self.date_info_label = QLabel("")
         self.date_info_label.setProperty("class", "stat-subtitle")
-        left_layout.addWidget(self.date_info_label)
+        scroll_layout.addWidget(self.date_info_label)
         
         self.refresh_btn = QPushButton("🔄 تحديث")
         self.refresh_btn.setProperty("class", "btn-secondary")
         self.refresh_btn.clicked.connect(self.refresh_data)
-        left_layout.addWidget(self.refresh_btn)
+        scroll_layout.addWidget(self.refresh_btn)
         
         # Stats
         sep2 = QFrame()
         sep2.setFrameShape(QFrame.HLine)
         sep2.setProperty("class", "card-separator")
-        left_layout.addWidget(sep2)
+        scroll_layout.addWidget(sep2)
         
         stats_label = QLabel("📊 الإحصائيات")
         stats_label.setProperty("class", "input-label")
-        left_layout.addWidget(stats_label)
+        scroll_layout.addWidget(stats_label)
         
         # Create stats grid
         stats_grid = QVBoxLayout()
@@ -106,17 +117,17 @@ class AttendanceReportTab(QWidget):
         stats_grid.addWidget(self.class1_label)
         stats_grid.addWidget(self.class2_label)
         stats_grid.addWidget(self.class3_label)
-        left_layout.addLayout(stats_grid)
+        scroll_layout.addLayout(stats_grid)
         
         # Exports
         sep3 = QFrame()
         sep3.setFrameShape(QFrame.HLine)
         sep3.setProperty("class", "card-separator")
-        left_layout.addWidget(sep3)
+        scroll_layout.addWidget(sep3)
         
         export_label = QLabel("📤 التصدير")
         export_label.setProperty("class", "input-label")
-        left_layout.addWidget(export_label)
+        scroll_layout.addWidget(export_label)
         
         export_grid = QVBoxLayout()
         export_grid.setSpacing(8)
@@ -156,8 +167,11 @@ class AttendanceReportTab(QWidget):
             row.addWidget(btn_pdf)
             export_grid.addLayout(row)
             
-        left_layout.addLayout(export_grid)
-        left_layout.addStretch()
+        scroll_layout.addLayout(export_grid)
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
         main_layout.addWidget(left_panel)
         

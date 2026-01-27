@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
                              QSplitter, QFrame, QRadioButton,
                              QButtonGroup, QSpinBox, QDialog, QFormLayout,
-                             QDialogButtonBox)
+                             QDialogButtonBox, QScrollArea, QCheckBox)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -128,40 +128,51 @@ class EarlyArrivalTab(QWidget):
         left_panel.setProperty("class", "dashboard-card")
         left_panel.setFixedWidth(340)
         left_layout = QVBoxLayout(left_panel)
-        left_layout.setSpacing(14)
         left_layout.setContentsMargins(20, 20, 20, 20)
         
         # Header
-        header = QHBoxLayout()
-        header_icon = QLabel("𓃷")
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("𓃬")
         header_icon.setProperty("class", "card-icon")
         header_title = QLabel("الحضور المبكر")
         header_title.setProperty("class", "card-title")
         header.addWidget(header_icon)
         header.addWidget(header_title)
         header.addStretch()
-        left_layout.addLayout(header)
+        left_layout.addWidget(header_widget)
         
         sep = QFrame()
         sep.setFrameShape(QFrame.HLine)
         sep.setProperty("class", "card-separator")
         left_layout.addWidget(sep)
         
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(16)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
         # Date Selection
         date_label = QLabel("📅 اختر التاريخ")
         date_label.setProperty("class", "input-label")
-        left_layout.addWidget(date_label)
+        scroll_layout.addWidget(date_label)
         
         self.date_selector = QComboBox()
         self.date_selector.setProperty("class", "dashboard-combo")
         self.date_selector.setMinimumHeight(40)
         self.date_selector.currentTextChanged.connect(self.load_early_arrivals)
-        left_layout.addWidget(self.date_selector)
+        scroll_layout.addWidget(self.date_selector)
         
         # Time Settings
         time_section = QLabel("⏰ الوقت المحدد للحضور")
         time_section.setProperty("class", "input-label")
-        left_layout.addWidget(time_section)
+        scroll_layout.addWidget(time_section)
         
         time_frame = QFrame()
         time_frame.setStyleSheet("background: #0f0f1a; border-radius: 8px; padding: 8px;")
@@ -195,7 +206,7 @@ class EarlyArrivalTab(QWidget):
         time_layout.addWidget(self.am_radio)
         time_layout.addWidget(self.pm_radio)
         
-        left_layout.addWidget(time_frame)
+        scroll_layout.addWidget(time_frame)
         
         # Service Time Info
         service_layout = QHBoxLayout()
@@ -209,18 +220,18 @@ class EarlyArrivalTab(QWidget):
         service_layout.addWidget(self.service_time_label)
         service_layout.addStretch()
         service_layout.addWidget(self.change_service_btn)
-        left_layout.addLayout(service_layout)
+        scroll_layout.addLayout(service_layout)
         
         # Separator
         sep2 = QFrame()
         sep2.setFrameShape(QFrame.HLine)
         sep2.setProperty("class", "card-separator")
-        left_layout.addWidget(sep2)
+        scroll_layout.addWidget(sep2)
         
         # Stats Section
         stats_label = QLabel("📊 الإحصائيات")
         stats_label.setProperty("class", "input-label")
-        left_layout.addWidget(stats_label)
+        scroll_layout.addWidget(stats_label)
         
         # Stats in frames
         self.total_attendance_label = self.create_stat_frame("👥 إجمالي الحضور", "0")
@@ -228,30 +239,34 @@ class EarlyArrivalTab(QWidget):
         self.percentage_label = self.create_stat_frame("📊 النسبة", "0%")
         self.avg_arrival_label = self.create_stat_frame("⏱️ متوسط الوقت", "--:--")
         
-        left_layout.addWidget(self.total_attendance_label)
-        left_layout.addWidget(self.early_arrival_label)
-        left_layout.addWidget(self.percentage_label)
-        left_layout.addWidget(self.avg_arrival_label)
+        scroll_layout.addWidget(self.total_attendance_label)
+        scroll_layout.addWidget(self.early_arrival_label)
+        scroll_layout.addWidget(self.percentage_label)
+        scroll_layout.addWidget(self.avg_arrival_label)
         
         # Action Buttons
         sep3 = QFrame()
         sep3.setFrameShape(QFrame.HLine)
         sep3.setProperty("class", "card-separator")
-        left_layout.addWidget(sep3)
+        scroll_layout.addWidget(sep3)
         
         self.export_btn = QPushButton("📤 تصدير التقرير")
         self.export_btn.setProperty("class", "btn-success")
         self.export_btn.setMinimumHeight(40)
         self.export_btn.clicked.connect(self.export_early_arrivals)
-        left_layout.addWidget(self.export_btn)
+        scroll_layout.addWidget(self.export_btn)
         
         self.refresh_btn = QPushButton("🔄 تحديث")
         self.refresh_btn.setProperty("class", "btn-secondary")
         self.refresh_btn.setMinimumHeight(40)
         self.refresh_btn.clicked.connect(self.refresh_data)
-        left_layout.addWidget(self.refresh_btn)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        left_layout.addStretch()
+        scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
+        
         main_layout.addWidget(left_panel)
         
         # ═══════════════════════════════════════════════════════════════

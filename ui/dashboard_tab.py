@@ -29,7 +29,17 @@ class DashboardTab(ModernWidget):
         self.apply_scaled_stylesheet()
         
     def setup_ui(self):
-        main_layout = QVBoxLayout()
+        # Outer Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+        
+        # Container Widget
+        container = QWidget()
+        container.setObjectName("dashboardContainer")
+        
+        main_layout = QVBoxLayout(container)
         main_layout.setSpacing(16)
         main_layout.setContentsMargins(24, 24, 24, 24)
         
@@ -175,7 +185,12 @@ class DashboardTab(ModernWidget):
         
         main_layout.addLayout(content_row, 1)
         
-        self.setLayout(main_layout)
+        scroll.setWidget(container)
+        
+        # Set outer layout
+        outer_layout = QVBoxLayout(self)
+        outer_layout.setContentsMargins(0, 0, 0, 0)
+        outer_layout.addWidget(scroll)
         
     def load_children_data(self):
         """Load children data for autocomplete"""

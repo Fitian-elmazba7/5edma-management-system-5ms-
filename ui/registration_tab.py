@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit,
                              QLabel, QPushButton, QGroupBox, QTextEdit, 
                              QTableWidget, QTableWidgetItem, QHeaderView,
                              QMessageBox, QCompleter, QComboBox, QMenu, QAction, QDialog,
-                             QFrame, QSizePolicy, QSpacerItem, QGridLayout)
+                             QFrame, QSizePolicy, QSpacerItem, QScrollArea, QGridLayout)
 from PyQt5.QtCore import Qt, pyqtSignal
 from utils.database import DatabaseManager
 import json

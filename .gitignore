@@ -54,3 +54,9 @@ ui/__pycache__/main_window.cpython-311.pyc
 */__pycache__
 *.pyc
 ChurchAttendanceSystem.spec
+ui/__pycache__/absence.cpython-311.pyc
+ui/__pycache__/attendance_report.cpython-311.pyc
+ui/__pycache__/comparison_report.cpython-311.pyc
+ui/__pycache__/data_management.cpython-311.pyc
+ui/__pycache__/early_arrival.cpython-311.pyc
+ui/__pycache__/registration_tab.cpython-311.pyc

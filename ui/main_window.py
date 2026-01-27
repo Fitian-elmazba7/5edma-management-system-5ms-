@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("𓆓 نظام الحضور والغياب - الكنيسة القبطية الأرثوذكسية 𓆓")
-        self.setGeometry(100, 100, 1400, 900)
+        self.setGeometry(50, 50, 1200, 680)
         
         # تحميل الخط العربي
         self.load_arabic_font()

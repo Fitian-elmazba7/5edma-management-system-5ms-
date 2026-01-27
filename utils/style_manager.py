@@ -1,14 +1,24 @@
 import os
+import sys
 from PyQt5.QtWidgets import QApplication
 
 class StyleManager:
     @staticmethod
+    def get_resource_path(relative_path):
+        """Get the absolute path to a resource, works for dev and for PyInstaller."""
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        return os.path.join(base_path, relative_path)
+
+    @staticmethod
     def load_stylesheet(filename="main.qss"):
         """Load the QSS stylesheet from the assets/styles directory."""
         try:
-            # Assuming the assets directory is in the root of the project
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            style_path = os.path.join(base_dir, "assets", "styles", filename)
+            style_path = StyleManager.get_resource_path(os.path.join("assets", "styles", filename))
             
             if os.path.exists(style_path):
                 with open(style_path, "r", encoding="utf-8") as f:

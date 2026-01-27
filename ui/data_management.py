@@ -278,9 +278,11 @@ class DataManagementTab(ModernWidget):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setStyleSheet("background: transparent;")
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
         scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
         scroll_layout = QVBoxLayout(scroll_content)
         scroll_layout.setSpacing(14)
         scroll_layout.setContentsMargins(0, 0, 0, 0)

@@ -33,11 +33,14 @@ class DashboardTab(ModernWidget):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setStyleSheet("background: transparent;")
+        scroll.viewport().setStyleSheet("background-color: #0f0f1a;")
+        scroll.setStyleSheet("background-color: #0f0f1a; border: none;")
         
         # Container Widget
         container = QWidget()
         container.setObjectName("dashboardContainer")
+        container.setStyleSheet("background-color: #0f0f1a;")
+        container.setMinimumWidth(1000)
         
         main_layout = QVBoxLayout(container)
         main_layout.setSpacing(16)

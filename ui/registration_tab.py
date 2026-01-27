@@ -33,11 +33,14 @@ class RegistrationTab(ModernWidget):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setStyleSheet("background: transparent;")
+        scroll.viewport().setStyleSheet("background-color: #0f0f1a;")
+        scroll.setStyleSheet("background-color: #0f0f1a; border: none;")
         
         # Container Widget
         container = QWidget()
         container.setObjectName("registrationContainer")
+        container.setStyleSheet("background-color: #0f0f1a;")
+        container.setMinimumWidth(1000)
         
         # Main vertical layout
         main_layout = QVBoxLayout(container)

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QTableWidget, QTableWidgetItem, QHeaderView,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
-                             QSplitter, QProgressBar, QCheckBox)
+                             QSplitter, QProgressBar, QCheckBox, QFrame, QScrollArea)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -26,286 +26,221 @@ class AttendanceReportTab(QWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Stats
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(350)
+        # Header
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("𓃭")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("تقرير الحضور")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
         
-        # اللوحة اليسرى: التحكم والإحصائيات
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
-        # عنوان القسم
-        title_label = QLabel("𓃭 تقرير الحضور الشامل")
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 10px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #27ae60, stop:1 #2ecc71);
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
         
-        # مجموعة التحكم
-        control_group = QGroupBox("إعدادات التقرير")
-        control_layout = QVBoxLayout()
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
-        control_layout.addWidget(QLabel("اختر تاريخ الخدمة:"))
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep)
+        
+        # Filters
+        filter_label = QLabel("📋 إعدادات التقرير")
+        filter_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(filter_label)
+        
         self.date_selector = QComboBox()
+        self.date_selector.setProperty("class", "dashboard-combo")
+        self.date_selector.setMinimumHeight(40)
         self.date_selector.currentTextChanged.connect(self.load_attendance_data)
+        scroll_layout.addWidget(self.date_selector)
         
-        # خيار عرض أيام الخدمة فقط
         self.service_days_only = QCheckBox("عرض أيام الخدمة فقط")
         self.service_days_only.stateChanged.connect(self.load_dates)
+        scroll_layout.addWidget(self.service_days_only)
         
-        # معلومات التاريخ المحدد
         self.date_info_label = QLabel("")
-        self.date_info_label.setStyleSheet("QLabel { color: #2c3e50; font-weight: bold; padding: 5px; }")
+        self.date_info_label.setProperty("class", "stat-subtitle")
+        scroll_layout.addWidget(self.date_info_label)
         
-        self.refresh_btn = QPushButton("تحديث البيانات")
+        self.refresh_btn = QPushButton("🔄 تحديث")
+        self.refresh_btn.setProperty("class", "btn-secondary")
         self.refresh_btn.clicked.connect(self.refresh_data)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        control_layout.addWidget(self.service_days_only)
-        control_layout.addWidget(self.date_selector)
-        control_layout.addWidget(self.date_info_label)
-        control_layout.addWidget(self.refresh_btn)
+        # Stats
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep2)
         
-        control_group.setLayout(control_layout)
+        stats_label = QLabel("📊 الإحصائيات")
+        stats_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(stats_label)
         
-        # الإحصائيات
-        stats_group = QGroupBox("الإحصائيات الفورية")
-        stats_layout = QVBoxLayout()
+        # Create stats grid
+        stats_grid = QVBoxLayout()
+        stats_grid.setSpacing(8)
         
-        self.total_label = QLabel("إجمالي الأطفال: 0")
-        self.present_label = QLabel("الحضور الكلي: 0")
-        self.attendance_rate_label = QLabel("نسبة الحضور: 0%")
-        self.class1_label = QLabel("الصف الأول: 0")
-        self.class2_label = QLabel("الصف الثاني: 0") 
-        self.class3_label = QLabel("الصف الثالث: 0")
+        self.total_label = self.create_stat_frame("👥 الإجمالي", "0")
+        self.present_label = self.create_stat_frame("✅ الحضور", "0")
+        self.attendance_rate_label = self.create_stat_frame("📈 النسبة", "0%")
+        self.class1_label = self.create_stat_frame("📚 أولى", "0")
+        self.class2_label = self.create_stat_frame("📚 ثانية", "0")
+        self.class3_label = self.create_stat_frame("📚 ثالثة", "0")
         
-        for label in [self.total_label, self.present_label, self.attendance_rate_label, 
-                     self.class1_label, self.class2_label, self.class3_label]:
-            label.setStyleSheet("QLabel { font-weight: bold; padding: 5px; }")
-            stats_layout.addWidget(label)
+        stats_grid.addWidget(self.total_label)
+        stats_grid.addWidget(self.present_label)
+        stats_grid.addWidget(self.attendance_rate_label)
+        stats_grid.addWidget(self.class1_label)
+        stats_grid.addWidget(self.class2_label)
+        stats_grid.addWidget(self.class3_label)
+        scroll_layout.addLayout(stats_grid)
         
-        stats_group.setLayout(stats_layout)
+        # Exports
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep3)
         
-        # أزرار التصدير - تم التعديل هنا
-        export_group = QGroupBox("تصدير التقارير")
-        export_layout = QVBoxLayout()
+        export_label = QLabel("📤 التصدير")
+        export_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(export_label)
         
-        # تصدير الكل
-        all_export_layout = QHBoxLayout()
-        self.export_excel_btn = QPushButton("📊 تصدير الكل إلى Excel")
+        export_grid = QVBoxLayout()
+        export_grid.setSpacing(8)
+        
+        # All
+        row_all = QHBoxLayout()
+        self.export_excel_btn = QPushButton("Excel الكل")
+        self.export_excel_btn.setProperty("class", "btn-success")
         self.export_excel_btn.clicked.connect(self.export_to_excel)
-        self.export_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
         
-        self.export_pdf_btn = QPushButton("📄 تصدير الكل إلى PDF")
+        self.export_pdf_btn = QPushButton("PDF الكل")
+        self.export_pdf_btn.setProperty("class", "btn-danger")
         self.export_pdf_btn.clicked.connect(self.export_to_pdf)
-        self.export_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
         
-        all_export_layout.addWidget(self.export_excel_btn)
-        all_export_layout.addWidget(self.export_pdf_btn)
+        row_all.addWidget(self.export_excel_btn)
+        row_all.addWidget(self.export_pdf_btn)
+        export_grid.addLayout(row_all)
         
-        # تصدير حسب الصف
-        class_export_layout = QVBoxLayout()
-        class_export_layout.addWidget(QLabel("📚 تصدير حسب الصف:"))
+        # Classes
+        for cls_name, cls_label, btn_excel_name, btn_pdf_name in [
+            ('الصف الأول', "أولى", "export_class1_excel_btn", "export_class1_pdf_btn"),
+            ('الصف الثاني', "ثانية", "export_class2_excel_btn", "export_class2_pdf_btn"),
+            ('الصف الثالث', "ثالثة", "export_class3_excel_btn", "export_class3_pdf_btn")
+        ]:
+            row = QHBoxLayout()
+            btn_excel = QPushButton(f"{cls_label} Excel")
+            btn_excel.setProperty("class", "default")
+            btn_excel.clicked.connect(lambda c=cls_name: self.export_class_to_excel(c))
+            setattr(self, btn_excel_name, btn_excel)
+            
+            btn_pdf = QPushButton(f"{cls_label} PDF")
+            btn_pdf.setProperty("class", "btn-purple")
+            btn_pdf.clicked.connect(lambda c=cls_name: self.export_class_to_pdf(c))
+            setattr(self, btn_pdf_name, btn_pdf)
+            
+            row.addWidget(btn_excel)
+            row.addWidget(btn_pdf)
+            export_grid.addLayout(row)
+            
+        scroll_layout.addLayout(export_grid)
+        scroll_layout.addStretch()
         
-        # الصف الأول
-        class1_layout = QHBoxLayout()
-        self.export_class1_excel_btn = QPushButton("الصف الأول - Excel")
-        self.export_class1_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الأول'))
-        self.export_class1_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
-        self.export_class1_pdf_btn = QPushButton("الصف الأول - PDF")
-        self.export_class1_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الأول'))
-        self.export_class1_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
+        main_layout.addWidget(left_panel)
         
-        class1_layout.addWidget(self.export_class1_excel_btn)
-        class1_layout.addWidget(self.export_class1_pdf_btn)
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Table
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        # الصف الثاني
-        class2_layout = QHBoxLayout()
-        self.export_class2_excel_btn = QPushButton("الصف الثاني - Excel")
-        self.export_class2_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الثاني'))
-        self.export_class2_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        # Header
+        table_header = QHBoxLayout()
+        table_icon = QLabel("📊")
+        table_icon.setProperty("class", "card-icon")
+        table_title = QLabel("جدول الحضور")
+        table_title.setProperty("class", "card-title")
+        table_header.addWidget(table_icon)
+        table_header.addWidget(table_title)
         
-        self.export_class2_pdf_btn = QPushButton("الصف الثاني - PDF")
-        self.export_class2_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الثاني'))
-        self.export_class2_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
+        table_header.addStretch()
+        self.report_info_label = QLabel("")
+        self.report_info_label.setProperty("class", "stat-subtitle")
+        table_header.addWidget(self.report_info_label)
         
-        class2_layout.addWidget(self.export_class2_excel_btn)
-        class2_layout.addWidget(self.export_class2_pdf_btn)
+        right_layout.addLayout(table_header)
         
-        # الصف الثالث
-        class3_layout = QHBoxLayout()
-        self.export_class3_excel_btn = QPushButton("الصف الثالث - Excel")
-        self.export_class3_excel_btn.clicked.connect(lambda: self.export_class_to_excel('الصف الثالث'))
-        self.export_class3_excel_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #3498db, stop: 1 #2980b9);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2980b9, stop: 1 #3498db);
-            }
-        """)
+        sep4 = QFrame()
+        sep4.setFrameShape(QFrame.HLine)
+        sep4.setProperty("class", "card-separator")
+        right_layout.addWidget(sep4)
         
-        self.export_class3_pdf_btn = QPushButton("الصف الثالث - PDF")
-        self.export_class3_pdf_btn.clicked.connect(lambda: self.export_class_to_pdf('الصف الثالث'))
-        self.export_class3_pdf_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 8px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #9b59b6);
-            }
-        """)
-        
-        class3_layout.addWidget(self.export_class3_excel_btn)
-        class3_layout.addWidget(self.export_class3_pdf_btn)
-        
-        class_export_layout.addLayout(class1_layout)
-        class_export_layout.addLayout(class2_layout)
-        class_export_layout.addLayout(class3_layout)
-        
-        export_layout.addLayout(all_export_layout)
-        export_layout.addLayout(class_export_layout)
-        export_group.setLayout(export_layout)
-        
-        left_layout.addWidget(title_label)
-        left_layout.addWidget(control_group)
-        left_layout.addWidget(stats_group)
-        left_layout.addWidget(export_group)
-        left_layout.addStretch()
-        
-        left_panel.setLayout(left_layout)
-        
-        # اللوحة اليمنى: عرض البيانات
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
-        
-        # معلومات التقرير
-        self.report_info_label = QLabel("تقرير الحضور الشامل")
-        self.report_info_label.setStyleSheet("""
-            QLabel {
-                font-size: 16px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
-        right_layout.addWidget(self.report_info_label)
-        
-        # جدول الحضور
+        # Table
         self.attendance_table = QTableWidget()
+        self.attendance_table.setProperty("class", "dashboard-table")
         self.setup_attendance_table()
         
         right_layout.addWidget(self.attendance_table)
-        right_panel.setLayout(right_layout)
+        main_layout.addWidget(right_panel, 1)
         
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([400, 600])  # زيادة عرض اللوحة اليسرى قليلاً
-        
-        main_layout.addWidget(splitter)
         self.setLayout(main_layout)
+    
+    def create_stat_frame(self, label_text, value_text):
+        """Create a stat frame widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
+        
+        lbl = QLabel(label_text)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value_text)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_frame(self, frame, value):
+        """Update stat frame value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
     
     def setup_attendance_table(self):
         """إعداد جدول الحضور"""
@@ -448,22 +383,22 @@ class AttendanceReportTab(QWidget):
         try:
             stats = self.db.get_attendance_stats_by_date(date)
             if not stats:
-                self.total_label.setText("إجمالي الأطفال: 0")
-                self.present_label.setText("الحضور الكلي: 0")
-                self.attendance_rate_label.setText("نسبة الحضور: 0%")
-                self.class1_label.setText("الصف الأول: 0")
-                self.class2_label.setText("الصف الثاني: 0")
-                self.class3_label.setText("الصف الثالث: 0")
+                self.update_stat_frame(self.total_label, "0")
+                self.update_stat_frame(self.present_label, "0")
+                self.update_stat_frame(self.attendance_rate_label, "0%")
+                self.update_stat_frame(self.class1_label, "0")
+                self.update_stat_frame(self.class2_label, "0")
+                self.update_stat_frame(self.class3_label, "0")
                 return
             
-            self.total_label.setText(f"إجمالي الأطفال: {stats['total']}")
-            self.present_label.setText(f"الحضور الكلي: {stats['present']}")
-            self.attendance_rate_label.setText(f"نسبة الحضور: {stats['attendance_rate']:.1f}%")
+            self.update_stat_frame(self.total_label, str(stats['total']))
+            self.update_stat_frame(self.present_label, str(stats['present']))
+            self.update_stat_frame(self.attendance_rate_label, f"{stats['attendance_rate']:.1f}%")
             
             class_stats = stats.get('classes', {})
-            self.class1_label.setText(f"الصف الأول: حاضر {class_stats.get('الصف الأول', {}).get('present', 0)}")
-            self.class2_label.setText(f"الصف الثاني: حاضر {class_stats.get('الصف الثاني', {}).get('present', 0)}")
-            self.class3_label.setText(f"الصف الثالث: حاضر {class_stats.get('الصف الثالث', {}).get('present', 0)}")
+            self.update_stat_frame(self.class1_label, str(class_stats.get('الصف الأول', {}).get('present', 0)))
+            self.update_stat_frame(self.class2_label, str(class_stats.get('الصف الثاني', {}).get('present', 0)))
+            self.update_stat_frame(self.class3_label, str(class_stats.get('الصف الثالث', {}).get('present', 0)))
             
         except Exception as e:
             print(f"Error updating stats: {str(e)}")

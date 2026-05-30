@@ -1,8 +1,9 @@
+# absence.py - Dashboard Grid Layout for Absence Tracking
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QTableWidget, QTableWidgetItem, QHeaderView,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
-                             QTabWidget, QProgressBar, QSplitter,
-                             QCheckBox)
+                             QTabWidget, QProgressBar, QSplitter, QFrame,
+                             QCheckBox, QScrollArea)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon, QFont
 from utils.database import DatabaseManager
@@ -22,133 +23,159 @@ class AbsenceTab(QWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Stats
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(320)
+        # Header
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("𓃻")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("متابعة الغياب")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
         
-        # اللوحة اليسرى: التحكم والإحصائيات
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Scroll Area for the rest of the controls
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
-        # عنوان القسم
-        title_label = QLabel("𓃻 نظام متابعة الغياب")
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 10px;
-                background-color: #e74c3c;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(16)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
         
-        # مجموعة التحكم
-        control_group = QGroupBox("إعدادات التقرير")
-        control_layout = QVBoxLayout()
+        # Move controls into scroll_layout instead of left_layout
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
-        # خيار عرض أيام الخدمة فقط
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep)
+        
+        # Date Selection
+        date_section = QLabel("📅 اختر التاريخ")
+        date_section.setProperty("class", "input-label")
+        scroll_layout.addWidget(date_section)
+        
+        self.date_selector = QComboBox()
+        self.date_selector.setProperty("class", "dashboard-combo")
+        self.date_selector.setMinimumHeight(40)
+        self.date_selector.currentTextChanged.connect(self.load_absence_data)
+        scroll_layout.addWidget(self.date_selector)
+        
+        self.date_info_label = QLabel("")
+        self.date_info_label.setProperty("class", "stat-subtitle")
+        scroll_layout.addWidget(self.date_info_label)
+        
         self.service_days_only = QCheckBox("عرض أيام الخدمة فقط")
         self.service_days_only.stateChanged.connect(self.load_dates)
+        scroll_layout.addWidget(self.service_days_only)
         
-        control_layout.addWidget(self.service_days_only)
+        # Stats Section
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep2)
         
-        # زر توزيع المتابعة على الخدام
-        self.server_assignment_btn = QPushButton("👥 توزيع المتابعة على الخدام")
-        self.server_assignment_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #7d3c98);
-            }
-            QPushButton:disabled {
-                background: #bdc3c7;
-                color: #7f8c8d;
-            }
-        """)
+        stats_label = QLabel("📊 الإحصائيات")
+        stats_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(stats_label)
+        
+        # Stats Cards Grid
+        stats_grid_layout = QVBoxLayout()
+        stats_grid_layout.setSpacing(8)
+        
+        self.total_label = self.create_stat_row("👥 إجمالي الأطفال", "0")
+        self.absent_label = self.create_stat_row("❌ الغياب الكلي", "0")
+        self.attendance_rate_label = self.create_stat_row("✅ نسبة الحضور", "0%")
+        self.class1_label = self.create_stat_row("📚 الصف الأول", "0")
+        self.class2_label = self.create_stat_row("📚 الصف الثاني", "0")
+        self.class3_label = self.create_stat_row("📚 الصف الثالث", "0")
+        
+        stats_grid_layout.addWidget(self.total_label)
+        stats_grid_layout.addWidget(self.absent_label)
+        stats_grid_layout.addWidget(self.attendance_rate_label)
+        stats_grid_layout.addWidget(self.class1_label)
+        stats_grid_layout.addWidget(self.class2_label)
+        stats_grid_layout.addWidget(self.class3_label)
+        scroll_layout.addLayout(stats_grid_layout)
+        
+        # Action Buttons
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep3)
+        
+        self.server_assignment_btn = QPushButton("👥 توزيع على الخدام")
+        self.server_assignment_btn.setProperty("class", "btn-purple")
+        self.server_assignment_btn.setMinimumHeight(40)
         self.server_assignment_btn.clicked.connect(self.open_server_assignment)
-        self.server_assignment_btn.setEnabled(False)  # Initially disabled
+        self.server_assignment_btn.setEnabled(False)
+        scroll_layout.addWidget(self.server_assignment_btn)
         
-        control_layout.addWidget(self.server_assignment_btn)
-        control_layout.addWidget(QLabel("اختر تاريخ الخدمة:"))
-        self.date_selector = QComboBox()
-        self.date_selector.currentTextChanged.connect(self.load_absence_data)
-        
-        # معلومات التاريخ المحدد
-        self.date_info_label = QLabel("")
-        self.date_info_label.setStyleSheet("QLabel { color: #2c3e50; font-weight: bold; padding: 5px; }")
-        
-        self.refresh_btn = QPushButton("تحديث البيانات")
+        self.refresh_btn = QPushButton("🔄 تحديث")
+        self.refresh_btn.setProperty("class", "btn-secondary")
+        self.refresh_btn.setMinimumHeight(40)
         self.refresh_btn.clicked.connect(self.refresh_data)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        control_layout.addWidget(self.date_selector)
-        control_layout.addWidget(self.date_info_label)
-        control_layout.addWidget(self.refresh_btn)
+        # Export buttons
+        export_label = QLabel("📤 تصدير التقارير")
+        export_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(export_label)
         
-        control_group.setLayout(control_layout)
-        
-        # الإحصائيات
-        stats_group = QGroupBox("الإحصائيات الفورية")
-        stats_layout = QVBoxLayout()
-        
-        self.total_label = QLabel("إجمالي الأطفال: 0")
-        self.absent_label = QLabel("الغياب الكلي: 0")
-        self.attendance_rate_label = QLabel("نسبة الحضور: 0%")
-        self.class1_label = QLabel("الصف الأول: 0")
-        self.class2_label = QLabel("الصف الثاني: 0") 
-        self.class3_label = QLabel("الصف الثالث: 0")
-        
-        for label in [self.total_label, self.absent_label, self.attendance_rate_label, 
-                     self.class1_label, self.class2_label, self.class3_label]:
-            label.setStyleSheet("QLabel { font-weight: bold; padding: 5px; }")
-            stats_layout.addWidget(label)
-        
-        stats_group.setLayout(stats_layout)
-        
-        # أزرار التصدير
-        export_group = QGroupBox("تصدير التقارير")
-        export_layout = QVBoxLayout()
-        
-        self.export_all_btn = QPushButton("تصدير الغياب الكلي")
+        self.export_all_btn = QPushButton("تصدير الكل")
+        self.export_all_btn.setProperty("class", "btn-success")
         self.export_all_btn.clicked.connect(self.export_all_absence)
+        scroll_layout.addWidget(self.export_all_btn)
         
-        self.export_class1_btn = QPushButton("تصدير غياب الصف الأول")
-        self.export_class1_btn.clicked.connect(lambda: self.export_class_absence('الصف الأول'))
+        scroll_layout.addStretch()
         
-        self.export_class2_btn = QPushButton("تصدير غياب الصف الثاني")
-        self.export_class2_btn.clicked.connect(lambda: self.export_class_absence('الصف الثاني'))
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
-        self.export_class3_btn = QPushButton("تصدير غياب الصف الثالث")
-        self.export_class3_btn.clicked.connect(lambda: self.export_class_absence('الصف الثالث'))
+        main_layout.addWidget(left_panel)
         
-        export_layout.addWidget(self.export_all_btn)
-        export_layout.addWidget(self.export_class1_btn)
-        export_layout.addWidget(self.export_class2_btn)
-        export_layout.addWidget(self.export_class3_btn)
-        export_group.setLayout(export_layout)
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Tables
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        left_layout.addWidget(title_label)
-        left_layout.addWidget(control_group)
-        left_layout.addWidget(stats_group)
-        left_layout.addWidget(export_group)
-        left_layout.addStretch()
+        # Header
+        table_header = QHBoxLayout()
+        table_icon = QLabel("📊")
+        table_icon.setProperty("class", "card-icon")
+        table_title = QLabel("قوائم الغياب")
+        table_title.setProperty("class", "card-title")
+        table_header.addWidget(table_icon)
+        table_header.addWidget(table_title)
+        table_header.addStretch()
+        right_layout.addLayout(table_header)
         
-        left_panel.setLayout(left_layout)
+        sep4 = QFrame()
+        sep4.setFrameShape(QFrame.HLine)
+        sep4.setProperty("class", "card-separator")
+        right_layout.addWidget(sep4)
         
-        # اللوحة اليمنى: عرض البيانات
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
-        
-        # تبويبات للفصول
+        # Tabs
         self.tabs = QTabWidget()
         
         self.all_absence_tab = QWidget()
@@ -161,65 +188,68 @@ class AbsenceTab(QWidget):
         self.tabs.addTab(self.class2_tab, "الصف الثاني")
         self.tabs.addTab(self.class3_tab, "الصف الثالث")
         
-        # إعداد الجداول
         self.setup_absence_table(self.all_absence_tab, "الكل")
         self.setup_absence_table(self.class1_tab, "الصف الأول")
         self.setup_absence_table(self.class2_tab, "الصف الثاني")
         self.setup_absence_table(self.class3_tab, "الصف الثالث")
         
-        right_layout.addWidget(self.tabs)
-        right_panel.setLayout(right_layout)
+        right_layout.addWidget(self.tabs, 1)
         
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([350, 650])
-        
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(right_panel, 1)
         self.setLayout(main_layout)
+    
+    def create_stat_row(self, label, value):
+        """Create a stat row widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px; padding: 8px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(10, 8, 10, 8)
+        
+        lbl = QLabel(label)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_row(self, frame, value):
+        """Update stat row value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
     
     def setup_absence_table(self, tab, class_name):
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         
         table = QTableWidget()
         table.setObjectName(f"table_{class_name}")
+        table.setProperty("class", "dashboard-table")
         
-        # الأعمدة الأساسية المطلوبة
         table.setColumnCount(10)
         table.setHorizontalHeaderLabels([
             "الكود", "الاسم", "العمارة", "الشارع", "الدور", "الشقة",
             "موبيل الولد", "موبايل الأب", "موبايل الأم", "تليفون"
         ])
         
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         table.setAlternatingRowColors(True)
         table.setSortingEnabled(True)
         
-        # ضبط أبعاد الأعمدة
-        table.setColumnWidth(0, 80)   # الكود
-        table.setColumnWidth(1, 150)  # الاسم
-        table.setColumnWidth(2, 80)   # العمارة
-        table.setColumnWidth(3, 150)  # الشارع
-        table.setColumnWidth(4, 60)   # الدور
-        table.setColumnWidth(5, 60)   # الشقة
-        table.setColumnWidth(6, 100)  # موبيل الولد
-        table.setColumnWidth(7, 100)  # موبايل الأب
-        table.setColumnWidth(8, 100)  # موبايل الأم
-        table.setColumnWidth(9, 100)  # تليفون
-        
-        layout.addWidget(QLabel(f"قائمة الغياب - {class_name}"))
         layout.addWidget(table)
-        
         tab.setLayout(layout)
     
     def load_dates(self):
-        """تحميل تواريخ الحضور المسجلة فقط"""
         try:
             dates_info = self.db.get_attendance_dates_with_info()
             
-            # إذا كان مختار "أيام الخدمة فقط"
             if self.service_days_only.isChecked():
-                dates_info = [date for date in dates_info if date['is_service_day']]
+                dates_info = [d for d in dates_info if d['is_service_day']]
             
             self.date_selector.clear()
             for date_info in dates_info:
@@ -229,20 +259,16 @@ class AbsenceTab(QWidget):
                 self.date_selector.setCurrentIndex(0)
                 self.update_date_info(dates_info[0])
             else:
-                self.date_info_label.setText("لا توجد تواريخ مسجلة")
+                self.date_info_label.setText("لا توجد تواريخ")
                 
         except Exception as e:
-            QMessageBox.warning(self, "تحذير", f"خطأ في تحميل التواريخ: {str(e)}")
+            QMessageBox.warning(self, "تحذير", f"خطأ: {str(e)}")
     
     def update_date_info(self, date_info):
-        """تحديث معلومات التاريخ المحدد"""
-        info_text = f"التاريخ: {date_info['date']} | اليوم: {date_info['day_name']}"
+        info = f"{date_info['day_name']}"
         if date_info['is_service_day']:
-            info_text += " | ✅ يوم الخدمة"
-        else:
-            info_text += " | ⚠️ ليس يوم خدمة"
-        
-        self.date_info_label.setText(info_text)
+            info += " ✅"
+        self.date_info_label.setText(info)
     
     def load_absence_data(self):
         try:
@@ -251,12 +277,10 @@ class AbsenceTab(QWidget):
                 
             selected_date = self.date_selector.currentData()
             if not selected_date:
-                display_text = self.date_selector.currentText()
-                selected_date = display_text.split(' ')[0]
+                selected_date = self.date_selector.currentText().split(' ')[0]
             
             self.current_date = selected_date
             
-            # تحديث معلومات التاريخ
             date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
             day_name = date_obj.strftime("%A")
             arabic_day = self.db.arabic_days.get(day_name, day_name)
@@ -269,28 +293,22 @@ class AbsenceTab(QWidget):
                 'is_service_day': is_service_day
             })
             
-            # الحصول على الأطفال الغائبين
             self.current_absent_children = self.db.get_absent_children(selected_date)
-            
-            # تفعيل زر توزيع المتابعة إذا كان هناك غياب
             self.server_assignment_btn.setEnabled(len(self.current_absent_children) > 0)
             
-            # فصل الأطفال حسب الصفوف
-            class1_children = [child for child in self.current_absent_children if child.get('class') == 'الصف الأول']
-            class2_children = [child for child in self.current_absent_children if child.get('class') == 'الصف الثاني']
-            class3_children = [child for child in self.current_absent_children if child.get('class') == 'الصف الثالث']
+            class1 = [c for c in self.current_absent_children if c.get('class') == 'الصف الأول']
+            class2 = [c for c in self.current_absent_children if c.get('class') == 'الصف الثاني']
+            class3 = [c for c in self.current_absent_children if c.get('class') == 'الصف الثالث']
             
-            # تحديث الجداول
             self.update_absence_table('الكل', self.current_absent_children)
-            self.update_absence_table('الصف الأول', class1_children)
-            self.update_absence_table('الصف الثاني', class2_children)
-            self.update_absence_table('الصف الثالث', class3_children)
+            self.update_absence_table('الصف الأول', class1)
+            self.update_absence_table('الصف الثاني', class2)
+            self.update_absence_table('الصف الثالث', class3)
             
-            # تحديث الإحصائيات
             self.update_stats(selected_date)
             
         except Exception as e:
-            QMessageBox.critical(self, "خطأ", f"خطأ في تحميل بيانات الغياب: {str(e)}")
+            QMessageBox.critical(self, "خطأ", f"خطأ: {str(e)}")
     
     def update_absence_table(self, class_name, children):
         try:
@@ -303,62 +321,54 @@ class AbsenceTab(QWidget):
                     row = table.rowCount()
                     table.insertRow(row)
                     
-                    table.setItem(row, 0, QTableWidgetItem(str(child.get('code', 'غير محدد'))))
-                    table.setItem(row, 1, QTableWidgetItem(child.get('name', 'غير محدد')))
-                    table.setItem(row, 2, QTableWidgetItem(str(child.get('عماره', 'غير محدد'))))
-                    table.setItem(row, 3, QTableWidgetItem(child.get('شارع', 'غير محدد')))
-                    table.setItem(row, 4, QTableWidgetItem(str(child.get('دور', 'غير محدد'))))
-                    table.setItem(row, 5, QTableWidgetItem(str(child.get('شقه', 'غير محدد'))))
-                    table.setItem(row, 6, QTableWidgetItem(child.get('موبيل الولد', 'غير محدد')))
-                    table.setItem(row, 7, QTableWidgetItem(child.get('موبايل الاب', 'غير محدد')))
-                    table.setItem(row, 8, QTableWidgetItem(child.get('موبايل الام', 'غير محدد')))
-                    table.setItem(row, 9, QTableWidgetItem(child.get('تليفون', 'غير محدد')))
+                    table.setItem(row, 0, QTableWidgetItem(str(child.get('code', '-'))))
+                    table.setItem(row, 1, QTableWidgetItem(child.get('name', '-')))
+                    table.setItem(row, 2, QTableWidgetItem(str(child.get('عماره', '-'))))
+                    table.setItem(row, 3, QTableWidgetItem(child.get('شارع', '-')))
+                    table.setItem(row, 4, QTableWidgetItem(str(child.get('دور', '-'))))
+                    table.setItem(row, 5, QTableWidgetItem(str(child.get('شقه', '-'))))
+                    table.setItem(row, 6, QTableWidgetItem(child.get('موبيل الولد', '-')))
+                    table.setItem(row, 7, QTableWidgetItem(child.get('موبايل الاب', '-')))
+                    table.setItem(row, 8, QTableWidgetItem(child.get('موبايل الام', '-')))
+                    table.setItem(row, 9, QTableWidgetItem(child.get('تليفون', '-')))
                 
                 table.setSortingEnabled(True)
                 
-                if len(children) == 0:
+                if not children:
                     table.setRowCount(1)
-                    table.setItem(0, 0, QTableWidgetItem("🎉 لا يوجد غياب لهذا اليوم - جميع الأطفال حاضروا"))
+                    table.setItem(0, 0, QTableWidgetItem("🎉 لا يوجد غياب"))
                     table.setSpan(0, 0, 1, 10)
                     
         except Exception as e:
-            print(f"Error updating table for {class_name}: {str(e)}")
+            print(f"Error: {e}")
     
     def update_stats(self, date):
         try:
             stats = self.db.get_attendance_stats_by_date(date)
             if not stats:
-                # إذا لم تكن هناك إحصائيات لهذا التاريخ
-                self.total_label.setText("إجمالي الأطفال: 0")
-                self.absent_label.setText("الغياب الكلي: 0")
-                self.attendance_rate_label.setText("نسبة الحضور: 0%")
-                self.class1_label.setText("الصف الأول: 0")
-                self.class2_label.setText("الصف الثاني: 0")
-                self.class3_label.setText("الصف الثالث: 0")
                 return
             
-            self.total_label.setText(f"إجمالي الأطفال: {stats['total']}")
-            self.absent_label.setText(f"الغياب الكلي: {stats['absent']}")
-            self.attendance_rate_label.setText(f"نسبة الحضور: {stats['attendance_rate']:.1f}%")
+            self.update_stat_row(self.total_label, stats['total'])
+            self.update_stat_row(self.absent_label, stats['absent'])
+            self.update_stat_row(self.attendance_rate_label, f"{stats['attendance_rate']:.0f}%")
             
-            class_stats = stats.get('classes', {})
-            self.class1_label.setText(f"الصف الأول: غائب {class_stats.get('الصف الأول', {}).get('absent', 0)}")
-            self.class2_label.setText(f"الصف الثاني: غائب {class_stats.get('الصف الثاني', {}).get('absent', 0)}")
-            self.class3_label.setText(f"الصف الثالث: غائب {class_stats.get('الصف الثالث', {}).get('absent', 0)}")
+            classes = stats.get('classes', {})
+            self.update_stat_row(self.class1_label, classes.get('الصف الأول', {}).get('absent', 0))
+            self.update_stat_row(self.class2_label, classes.get('الصف الثاني', {}).get('absent', 0))
+            self.update_stat_row(self.class3_label, classes.get('الصف الثالث', {}).get('absent', 0))
             
         except Exception as e:
-            print(f"Error updating stats: {str(e)}")
+            print(f"Error: {e}")
     
     def refresh_data(self):
-        """تحديث البيانات"""
         self.load_dates()
         if self.date_selector.currentIndex() >= 0:
             self.load_absence_data()
-        QMessageBox.information(self, "تم التحديث", "تم تحديث بيانات الغياب بنجاح")
+        QMessageBox.information(self, "تم", "تم التحديث")
     
     def export_all_absence(self):
         if not self.current_absent_children:
-            QMessageBox.information(self, "معلومة", "لا توجد بيانات غياب للتصدير")
+            QMessageBox.information(self, "معلومة", "لا توجد بيانات")
             return
         
         try:
@@ -366,28 +376,25 @@ class AbsenceTab(QWidget):
             selected_date = self.date_selector.currentData()
             
             file_path, _ = QFileDialog.getSaveFileName(
-                self, "حفظ تقرير الغياب الكلي", 
-                f"تقرير_غياب_كامل_{selected_date}.xlsx", 
-                "Excel Files (*.xlsx)"
+                self, "حفظ التقرير", 
+                f"غياب_{selected_date}.xlsx", 
+                "Excel (*.xlsx)"
             )
             
             if file_path:
                 self.excel_handler.export_absence_report(
-                    self.current_absent_children, 
-                    file_path, 
-                    selected_date,
-                    "الغياب الكلي"
+                    self.current_absent_children, file_path, selected_date, "الغياب الكلي"
                 )
-                QMessageBox.information(self, "تم التصدير", "تم تصدير تقرير الغياب الكلي بنجاح")
+                QMessageBox.information(self, "تم", "تم التصدير")
                 
         except Exception as e:
-            QMessageBox.critical(self, "خطأ", f"خطأ في التصدير: {str(e)}")
+            QMessageBox.critical(self, "خطأ", str(e))
     
     def export_class_absence(self, class_name):
-        class_children = [child for child in self.current_absent_children if child.get('class') == class_name]
+        children = [c for c in self.current_absent_children if c.get('class') == class_name]
         
-        if not class_children:
-            QMessageBox.information(self, "معلومة", f"لا توجد بيانات غياب للصف {class_name}")
+        if not children:
+            QMessageBox.information(self, "معلومة", f"لا توجد بيانات لـ{class_name}")
             return
         
         try:
@@ -395,36 +402,29 @@ class AbsenceTab(QWidget):
             selected_date = self.date_selector.currentData()
             
             file_path, _ = QFileDialog.getSaveFileName(
-                self, f"حفظ تقرير غياب {class_name}", 
-                f"تقرير_غياب_{class_name}_{selected_date}.xlsx", 
-                "Excel Files (*.xlsx)"
+                self, f"حفظ تقرير {class_name}", 
+                f"غياب_{class_name}_{selected_date}.xlsx", 
+                "Excel (*.xlsx)"
             )
             
             if file_path:
-                self.excel_handler.export_absence_report(
-                    class_children, 
-                    file_path, 
-                    selected_date,
-                    f"غياب {class_name}"
-                )
-                QMessageBox.information(self, "تم التصدير", f"تم تصدير تقرير غياب {class_name} بنجاح")
+                self.excel_handler.export_absence_report(children, file_path, selected_date, class_name)
+                QMessageBox.information(self, "تم", "تم التصدير")
                 
         except Exception as e:
-            QMessageBox.critical(self, "خطأ", f"خطأ في التصدير: {str(e)}")
+            QMessageBox.critical(self, "خطأ", str(e))
     
     def open_server_assignment(self):
-        """فتح نافذة توزيع المتابعة على الخدام"""
         if not self.current_absent_children:
-            QMessageBox.information(self, "معلومة", "لا توجد أطفال غائبين لهذا اليوم.")
+            QMessageBox.information(self, "معلومة", "لا توجد أطفال غائبين")
             return
         
         if not self.current_date:
-            QMessageBox.warning(self, "تحذير", "لم يتم تحديد تاريخ.")
+            QMessageBox.warning(self, "تحذير", "لم يتم تحديد تاريخ")
             return
         
         try:
             dialog = ServerAssignmentDialog(self.current_absent_children, self.current_date, self)
             dialog.exec_()
-            
         except Exception as e:
-            QMessageBox.critical(self, "خطأ", f"حدث خطأ أثناء فتح نافذة التوزيع: {str(e)}")
+            QMessageBox.critical(self, "خطأ", str(e))

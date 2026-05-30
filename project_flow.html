@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5edma Management System - Project Flow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        #diagram-container {
+            width: 100%;
+            height: 85vh;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Project Architecture & Flow</h1>
+    
+    <div id="diagram-container">
+        <div class="mermaid">
+            graph TD
+                %% Styling
+                Style[assets/styles/main.qss] -->|Loaded by| SM[utils.StyleManager]
+                SM -->|Applies styles to| App
+
+                %% Entry Point
+                Entry[main.py] -->|Initializes| App[QApplication]
+                Entry -->|Creates| MW[ui.MainWindow]
+                
+                %% Main Window & Tabs
+                subgraph "UI Layer (PyQt5)"
+                    MW -->|Contains| Tabs[QTabWidget]
+                    
+                    Tabs -->|Tab 1| RegTab[RegistrationTab]
+                    Tabs -->|Tab 2| AbsTab[AbsenceTab]
+                    Tabs -->|Tab 3| DataTab[DataManagementTab]
+                    Tabs -->|Tab 4| EarlyTab[EarlyArrivalTab]
+                    Tabs -->|Tab 5| AttRepTab[AttendanceReportTab]
+                    Tabs -->|Tab 6| CompTab[ComparisonReportTab]
+                    
+                    %% Inter-Tab Communication
+                    RegTab -->|Signal: registration_finished| MW
+                    MW -->|Updates| AbsTab
+                    MW -->|Updates| EarlyTab
+                    
+                    %% Dialogs
+                    CompTab -.->|Opens| DateDialog[DateRangeDialog]
+                    AbsTab -.->|Opens| ServerDialog[ServerAssignmentDialog]
+                    RegTab -.->|Opens| ChildDialog[ChildDetailsDialog]
+                end
+
+                %% Data Layer
+                subgraph "Data Layer"
+                    DB[utils.DatabaseManager]
+                    Excel[utils.ExcelHandler]
+                    
+                    %% Database Connections
+                    RegTab <--> DB
+                    AbsTab <--> DB
+                    DataTab <--> DB
+                    EarlyTab <--> DB
+                    AttRepTab <--> DB
+                    CompTab <--> DB
+                    ChildDialog <--> DB
+                    
+                    %% Excel Internal Logic
+                    DataTab --> Excel
+                    AttRepTab --> Excel
+                    CompTab --> Excel
+                end
+
+                %% Storage
+                DB <-->|Reads/Writes| JSON[data/database.json]
+                Excel -->|Exports| XLSX[Excel Files]
+                
+                %% Styling Application
+                classDef main fill:#2c3e50,stroke:#2c3e50,color:white;
+                classDef tab fill:#3498db,stroke:#2980b9,color:white;
+                classDef util fill:#27ae60,stroke:#2ecc71,color:white;
+                classDef file fill:#f39c12,stroke:#d35400,color:white;
+                
+                class Entry,MW main;
+                class RegTab,AbsTab,DataTab,EarlyTab,AttRepTab,CompTab tab;
+                class DB,Excel,SM util;
+                class Style,JSON,XLSX file;
+                
+                %% Click Events (Adding interaction placeholders)
+                click Entry callback "Entry Point"
+                click MW callback "Main Window"
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="resetZoom()">Reset Zoom</button>
+        <button onclick="zoomIn()">Zoom In (+)</button>
+        <button onclick="zoomOut()">Zoom Out (-)</button>
+    </div>
+
+    <script>
+        var panZoomInstance;
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+        });
+
+        // Initialize pan-zoom after mermaid renders
+        var checkExist = setInterval(function() {
+            var svgElement = document.querySelector(".mermaid svg");
+            if (svgElement) {
+                console.log("SVG found!");
+                clearInterval(checkExist);
+                
+                // Allow styles to settle
+                setTimeout(() => {
+                    panZoomInstance = svgPanZoom(svgElement, {
+                        zoomEnabled: true,
+                        controlIconsEnabled: false,
+                        fit: true,
+                        center: true,
+                        minZoom: 0.1
+                    });
+                }, 500);
+            }
+        }, 100);
+
+        function resetZoom() {
+            if(panZoomInstance) panZoomInstance.reset();
+        }
+        function zoomIn() {
+            if(panZoomInstance) panZoomInstance.zoomIn();
+        }
+        function zoomOut() {
+            if(panZoomInstance) panZoomInstance.zoomOut();
+        }
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QMessageBox, QFileDialog, QGroupBox, QLabel,
                              QTextEdit, QProgressBar, QSplitter, QTabWidget,
                              QMenu, QAction, QLineEdit, QDialog, QFormLayout,
-                             QDialogButtonBox, QComboBox, QCheckBox)
+                             QDialogButtonBox, QComboBox, QCheckBox, QFrame, QScrollArea)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -138,32 +138,15 @@ class ExcelInstructionsDialog(QDialog):
         
         # عنوان
         title_label = QLabel("📋 الحد الأدنى المطلوب لملف Excel")
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 18px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #3498db;
-                border-radius: 5px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         title_label.setAlignment(Qt.AlignCenter)
         
         # التعليمات - تم إصلاح الألوان هنا
         instructions_text = QTextEdit()
         instructions_text.setReadOnly(True)
-        instructions_text.setStyleSheet("""
-            QTextEdit {
-                background-color: #ecf0f1;
-                color: #2c3e50;
-                font-size: 12px;
-                border: 1px solid #bdc3c7;
-                border-radius: 5px;
-                padding: 10px;
-            }
-        """)
+        instructions_text.setStyleSheet("")
+
         
         instructions_html = """
         <div dir="rtl" style="font-family: Arial; font-size: 12pt; line-height: 1.6;">
@@ -206,37 +189,13 @@ class ExcelInstructionsDialog(QDialog):
         button_layout = QHBoxLayout()
         download_template_btn = QPushButton("📥 تحميل نموذج Excel")
         download_template_btn.clicked.connect(self.download_template)
-        download_template_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
+        download_template_btn.setProperty("class", "btn-success")
+
         
         close_btn = QPushButton("إغلاق")
         close_btn.clicked.connect(self.accept)
-        close_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
+        close_btn.setProperty("class", "btn-danger")
+
         
         button_layout.addWidget(download_template_btn)
         button_layout.addStretch()
@@ -295,299 +254,213 @@ class DataManagementTab(ModernWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Actions
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(300)
+        # Header
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("𓃍")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("إدارة البيانات")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
         
-        # اللوحة اليسرى: التحكم والإحصائيات
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
-        # مجموعة الاستيراد
-        import_group = QGroupBox("𓃍 استيراد البيانات من Excel")
-        import_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #e74c3c;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
-        import_layout = QVBoxLayout()
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
         
-        self.import_btn = QPushButton("📥 استيراد بيانات الكنيسة")
-        self.analyze_btn = QPushButton("🔍 تحليل ملف Excel")
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
-        # إضافة خيار الاستيراد التزايدي
-        self.incremental_import = QCheckBox("استيراد تزايدي (إضافة بيانات جديدة فقط)")
-        self.incremental_import.setChecked(True)
-        self.incremental_import.setStyleSheet("QCheckBox { color: #ecf0f1; padding: 8px; }")
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep)
         
-        # زر تعليمات Excel الجديد
-        self.instructions_btn = QPushButton("📋 تعليمات ملف Excel")
-        self.instructions_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #9b59b6, stop: 1 #8e44ad);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #8e44ad, stop: 1 #7d3c98);
-            }
-        """)
+        # Import Section
+        import_label = QLabel("📥 الاستيراد")
+        import_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(import_label)
         
-        for btn in [self.import_btn, self.analyze_btn, self.instructions_btn]:
-            btn.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #3498db, stop: 0.7 #2980b9, stop: 1 #3498db);
-                    border: 1px solid #2574a9;
-                    border-radius: 6px;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 11px;
-                    padding: 8px 15px;
-                    min-width: 90px;
-                    min-height: 30px;
-                    margin: 2px;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #5dade2, stop: 0.7 #3498db, stop: 1 #5dade2);
-                }
-            """)
-        
+        self.import_btn = QPushButton("📥 استيراد من Excel")
+        self.import_btn.setProperty("class", "btn-success")
+        self.import_btn.setMinimumHeight(40)
         self.import_btn.clicked.connect(self.import_from_excel)
+        scroll_layout.addWidget(self.import_btn)
+        
+        self.analyze_btn = QPushButton("🔍 تحليل ملف")
+        self.analyze_btn.setProperty("class", "btn-secondary")
         self.analyze_btn.clicked.connect(self.analyze_excel)
+        scroll_layout.addWidget(self.analyze_btn)
+        
+        self.incremental_import = QCheckBox("استيراد تزايدي")
+        self.incremental_import.setChecked(True)
+        scroll_layout.addWidget(self.incremental_import)
+        
+        self.instructions_btn = QPushButton("📋 تعليمات Excel")
+        self.instructions_btn.setProperty("class", "btn-purple")
         self.instructions_btn.clicked.connect(self.show_excel_instructions)
+        scroll_layout.addWidget(self.instructions_btn)
         
-        import_layout.addWidget(self.import_btn)
-        import_layout.addWidget(self.analyze_btn)
-        import_layout.addWidget(self.incremental_import)
-        import_layout.addWidget(self.instructions_btn)
-        import_group.setLayout(import_layout)
-        
-        # شريط التقدم
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
-        self.progress_bar.setStyleSheet("""
-            QProgressBar {
-                border: 2px solid #34495e;
-                border-radius: 5px;
-                background-color: #2c3e50;
-                text-align: center;
-                color: white;
-                font-size: 10px;
-            }
-            QProgressBar::chunk {
-                background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                border-radius: 3px;
-            }
-        """)
+        scroll_layout.addWidget(self.progress_bar)
         
-        # مجموعة الإحصائيات
-        stats_group = QGroupBox("𓃎 الإحصائيات")
-        stats_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #3498db;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
-        stats_layout = QVBoxLayout()
+        # Separator
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep2)
         
-        self.total_label = QLabel("👥 إجمالي الأطفال: 0")
-        self.class1_label = QLabel("📚 الصف الأول: 0 طفل")
-        self.class2_label = QLabel("📚 الصف الثاني: 0 طفل") 
-        self.class3_label = QLabel("📚 الصف الثالث: 0 طفل")
+        # Stats Section
+        stats_label = QLabel("📊 الإحصائيات")
+        stats_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(stats_label)
         
-        for label in [self.total_label, self.class1_label, self.class2_label, self.class3_label]:
-            label.setStyleSheet("""
-                QLabel { 
-                    font-weight: bold; 
-                    padding: 8px; 
-                    background-color: #34495e;
-                    border-radius: 5px;
-                    margin: 2px;
-                    color: #ecf0f1;
-                }
-            """)
-            stats_layout.addWidget(label)
+        self.total_label = self.create_stat_frame("👥 الإجمالي", "0")
+        self.class1_label = self.create_stat_frame("📚 الصف الأول", "0")
+        self.class2_label = self.create_stat_frame("📚 الصف الثاني", "0")
+        self.class3_label = self.create_stat_frame("📚 الصف الثالث", "0")
         
-        stats_group.setLayout(stats_layout)
+        scroll_layout.addWidget(self.total_label)
+        scroll_layout.addWidget(self.class1_label)
+        scroll_layout.addWidget(self.class2_label)
+        scroll_layout.addWidget(self.class3_label)
         
-        # مجموعة الإجراءات
-        actions_group = QGroupBox("𓃰 الإجراءات")
-        actions_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 13px;
-                border: 2px solid #34495e;
-                border-radius: 6px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #2c3e50;
-                color: #ecf0f1;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 8px;
-                background-color: #27ae60;
-                color: white;
-                border-radius: 3px;
-            }
-        """)
-        actions_layout = QVBoxLayout()
+        # Separator
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep3)
         
-        self.add_btn = QPushButton("➕ إضافة طفل جديد")
-        self.export_btn = QPushButton("📤 تصدير البيانات")
-        self.export_modified_btn = QPushButton("📥 تصدير البيانات المعدلة")  # زر جديد
-        self.refresh_btn = QPushButton("🔄 تحديث البيانات")
+        # Actions Section
+        actions_label = QLabel("⚡ الإجراءات")
+        actions_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(actions_label)
         
-        for btn in [self.add_btn, self.export_btn, self.export_modified_btn, self.refresh_btn]:
-            btn.setStyleSheet("""
-                QPushButton {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #3498db, stop: 0.7 #2980b9, stop: 1 #3498db);
-                    border: 1px solid #2574a9;
-                    border-radius: 6px;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 11px;
-                    padding: 8px 15px;
-                    min-width: 90px;
-                    min-height: 30px;
-                    margin: 2px;
-                }
-                QPushButton:hover {
-                    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #5dade2, stop: 0.7 #3498db, stop: 1 #5dade2);
-                }
-            """)
-        
+        self.add_btn = QPushButton("➕ إضافة طفل")
+        self.add_btn.setProperty("class", "btn-success")
+        self.add_btn.setMinimumHeight(38)
         self.add_btn.clicked.connect(self.add_child)
+        scroll_layout.addWidget(self.add_btn)
+        
+        self.export_btn = QPushButton("📤 تصدير البيانات")
+        self.export_btn.setProperty("class", "btn-secondary")
         self.export_btn.clicked.connect(self.export_to_excel)
-        self.export_modified_btn.clicked.connect(self.export_modified_data)  # ربط الزر الجديد
+        scroll_layout.addWidget(self.export_btn)
+        
+        self.export_modified_btn = QPushButton("📥 تصدير المعدلة")
+        self.export_modified_btn.setProperty("class", "btn-secondary")
+        self.export_modified_btn.clicked.connect(self.export_modified_data)
+        scroll_layout.addWidget(self.export_modified_btn)
+        
+        self.refresh_btn = QPushButton("🔄 تحديث")
+        self.refresh_btn.setProperty("class", "btn-icon")
         self.refresh_btn.clicked.connect(self.load_children_data)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        actions_layout.addWidget(self.add_btn)
-        actions_layout.addWidget(self.export_btn)
-        actions_layout.addWidget(self.export_modified_btn)  # إضافة الزر الجديد
-        actions_layout.addWidget(self.refresh_btn)
-        actions_group.setLayout(actions_layout)
+        scroll_layout.addStretch()
         
-        left_layout.addWidget(import_group)
-        left_layout.addWidget(self.progress_bar)
-        left_layout.addWidget(stats_group)
-        left_layout.addWidget(actions_group)
-        left_layout.addStretch()
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
+        main_layout.addWidget(left_panel)
         
-        left_panel.setLayout(left_layout)
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Data Tables
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        # اللوحة اليمنى: عرض البيانات
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
+        # Header
+        table_header = QHBoxLayout()
+        table_icon = QLabel("📊")
+        table_icon.setProperty("class", "card-icon")
+        table_title = QLabel("بيانات الأطفال")
+        table_title.setProperty("class", "card-title")
+        table_header.addWidget(table_icon)
+        table_header.addWidget(table_title)
+        table_header.addStretch()
+        right_layout.addLayout(table_header)
         
-        # تبويبات لعرض البيانات
+        sep4 = QFrame()
+        sep4.setFrameShape(QFrame.HLine)
+        sep4.setProperty("class", "card-separator")
+        right_layout.addWidget(sep4)
+        
+        # Tabs
         self.tabs = QTabWidget()
         
-        # تبويب جميع الأطفال
         self.all_children_tab = QWidget()
-        self.setup_children_table(self.all_children_tab)
-        
-        # تبويب حسب الصفوف
         self.class1_tab = QWidget()
         self.class2_tab = QWidget()
         self.class3_tab = QWidget()
         
-        # إعداد الجداول لكل تبويب
+        self.setup_children_table(self.all_children_tab)
         self.setup_children_table(self.class1_tab)
         self.setup_children_table(self.class2_tab)
         self.setup_children_table(self.class3_tab)
         
-        self.tabs.addTab(self.all_children_tab, "👥 جميع الأطفال")
-        self.tabs.addTab(self.class1_tab, "📚 الصف الأول")
-        self.tabs.addTab(self.class2_tab, "📚 الصف الثاني")
-        self.tabs.addTab(self.class3_tab, "📚 الصف الثالث")
+        self.tabs.addTab(self.all_children_tab, "👥 الكل")
+        self.tabs.addTab(self.class1_tab, "📚 الأول")
+        self.tabs.addTab(self.class2_tab, "📚 الثاني")
+        self.tabs.addTab(self.class3_tab, "📚 الثالث")
         
-        right_layout.addWidget(self.tabs)
-        right_panel.setLayout(right_layout)
+        right_layout.addWidget(self.tabs, 1)
         
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([350, 650])
-        
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(right_panel, 1)
         self.setLayout(main_layout)
     
-    def apply_scaled_stylesheet(self):
-        """تطبيق الأنماط المعدلة حسب التكبير"""
-        base_stylesheet = """
-        QGroupBox {
-            font-size: 13px;
-        }
-        QPushButton {
-            font-size: 11px;
-            padding: 8px 15px;
-            min-height: 30px;
-        }
-        QLabel {
-            font-size: 11px;
-        }
-        QTableWidget {
-            font-size: 11px;
-        }
-        QHeaderView::section {
-            font-size: 11px;
-            padding: 10px;
-        }
-        QTabWidget::pane {
-            border-radius: 8px;
-            margin-top: 5px;
-        }
-        QTabBar::tab {
-            min-width: 180px;
-            padding: 12px 16px;
-            font-size: 13px;
-        }
-        QProgressBar {
-            font-size: 10px;
-        }
-        """
+    def create_stat_frame(self, label_text, value_text):
+        """Create a stat frame widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
         
-        scaled_stylesheet = self.get_scaled_stylesheet(base_stylesheet)
-        self.setStyleSheet(scaled_stylesheet)
+        lbl = QLabel(label_text)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value_text)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_frame(self, frame, value):
+        """Update stat frame value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
+    
+    def apply_scaled_stylesheet(self):
+        """No-op: Styles are handled by main.qss"""
+        pass
+
     
     def show_excel_instructions(self):
         """عرض تعليمات ملف Excel"""
@@ -609,36 +482,8 @@ class DataManagementTab(ModernWidget):
         children_table.setSortingEnabled(True)
         children_table.setContextMenuPolicy(Qt.CustomContextMenu)
         children_table.customContextMenuRequested.connect(self.show_context_menu)
-        children_table.setStyleSheet("""
-            QTableWidget {
-                background-color: #2c3e50;
-                alternate-background-color: #34495e;
-                selection-background-color: #3498db;
-                border: 1px solid #34495e;
-                border-radius: 6px;
-                gridline-color: #34495e;
-                font-size: 11px;
-                color: #ecf0f1;
-            }
-            QTableWidget::item {
-                padding: 8px;
-                border-bottom: 1px solid #34495e;
-                color: #ecf0f1;
-            }
-            QTableWidget::item:selected {
-                background-color: #3498db;
-                color: white;
-            }
-            QHeaderView::section {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #1a1a2e, stop: 1 #16213e);
-                color: white;
-                padding: 10px;
-                border: 1px solid #0f3460;
-                font-weight: bold;
-                font-size: 11px;
-            }
-        """)
+        children_table.setStyleSheet("")
+
         
         # ضبط أبعاد الأعمدة
         children_table.setColumnWidth(0, 80)   # الكود
@@ -822,10 +667,10 @@ class DataManagementTab(ModernWidget):
         class2 = len([c for c in children if c.get('class') == 'الصف الثاني'])
         class3 = len([c for c in children if c.get('class') == 'الصف الثالث'])
         
-        self.total_label.setText(f"👥 إجمالي الأطفال: {total}")
-        self.class1_label.setText(f"📚 الصف الأول: {class1} طفل")
-        self.class2_label.setText(f"📚 الصف الثاني: {class2} طفل")
-        self.class3_label.setText(f"📚 الصف الثالث: {class3} طفل")
+        self.update_stat_frame(self.total_label, total)
+        self.update_stat_frame(self.class1_label, class1)
+        self.update_stat_frame(self.class2_label, class2)
+        self.update_stat_frame(self.class3_label, class3)
     
     def import_from_excel(self):
         file_path, _ = QFileDialog.getOpenFileName(

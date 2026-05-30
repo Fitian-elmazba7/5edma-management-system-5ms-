@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QSplitter, QDateEdit, QProgressBar, QTabWidget,
                              QFrame, QCheckBox, QSpinBox, QLineEdit,
                              QCalendarWidget, QDialog, QDialogButtonBox,
-                             QFormLayout, QRadioButton, QButtonGroup)
+                             QFormLayout, QRadioButton, QButtonGroup, QScrollArea)
 from PyQt5.QtCore import Qt, QDate
 from PyQt5.QtGui import QIcon, QFont, QColor
 from utils.database import DatabaseManager
@@ -164,162 +164,188 @@ class ComparisonReportTab(QWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Stats
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(350)
+        # Header
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("📊")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("تقرير المقارنة")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
         
-        # اللوحة اليسرى: التحكم
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
-        # عنوان القسم
-        title_label = QLabel("📊 تقارير مقارنة الحضور")
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 18px;
-                font-weight: bold;
-                color: white;
-                padding: 12px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 #9b59b6, stop:1 #8e44ad);
-                border-radius: 8px;
-                margin: 5px;
-            }
-        """)
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(14)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
         
-        # مجموعة اختيار الفترة
-        period_group = QGroupBox("⏰ تحديد الفترة الزمنية")
-        period_layout = QVBoxLayout()
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
+        left_layout.addWidget(header_widget)
         
-        period_info_layout = QHBoxLayout()
-        self.period_label = QLabel("الفترة: غير محدد")
-        self.period_label.setStyleSheet("QLabel { font-weight: bold; color: #2c3e50; }")
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep)
+        
+        # Period Selection
+        period_label = QLabel("⏰ الفترة الزمنية")
+        period_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(period_label)
         
         self.select_period_btn = QPushButton("📅 اختيار الفترة")
+        self.select_period_btn.setProperty("class", "dashboard-combo")
+        self.select_period_btn.setMinimumHeight(40)
         self.select_period_btn.clicked.connect(self.select_date_range)
+        scroll_layout.addWidget(self.select_period_btn)
         
-        period_info_layout.addWidget(self.period_label)
-        period_info_layout.addStretch()
-        period_info_layout.addWidget(self.select_period_btn)
+        self.period_label = QLabel("الفترة: غير محدد")
+        self.period_label.setProperty("class", "stat-subtitle")
+        scroll_layout.addWidget(self.period_label)
         
-        period_layout.addLayout(period_info_layout)
-        
-        # معلومات أيام الخدمة
         self.service_days_info = QLabel("أيام الخدمة: الخميس فقط")
-        self.service_days_info.setStyleSheet("""
-            QLabel {
-                color: #27ae60;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-            }
-        """)
-        period_layout.addWidget(self.service_days_info)
+        self.service_days_info.setProperty("class", "filter-info-success")
+        scroll_layout.addWidget(self.service_days_info)
         
-        period_group.setLayout(period_layout)
-        
-        # مجموعة اختيار الصف
-        class_group = QGroupBox("📚 اختيار الصف للمقارنة")
-        class_layout = QVBoxLayout()
+        # Class Selection
+        class_label = QLabel("📚 الصف للمقارنة")
+        class_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(class_label)
         
         self.class_combo = QComboBox()
+        self.class_combo.setProperty("class", "dashboard-combo")
         self.class_combo.addItems(["الكل", "الصف الأول", "الصف الثاني", "الصف الثالث"])
         self.class_combo.currentTextChanged.connect(self.on_class_changed)
+        scroll_layout.addWidget(self.class_combo)
         
-        class_layout.addWidget(self.class_combo)
-        class_group.setLayout(class_layout)
+        # Actions
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep2)
         
-        # مجموعة التحكم
-        control_group = QGroupBox("⚙️ التحكم")
-        control_layout = QVBoxLayout()
+        actions_label = QLabel("⚡ الإجراءات")
+        actions_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(actions_label)
         
-        self.generate_btn = QPushButton("🔍 توليد تقرير المقارنة")
+        self.generate_btn = QPushButton("🔍 توليد التقرير")
+        self.generate_btn.setProperty("class", "btn-success")
+        self.generate_btn.setMinimumHeight(40)
         self.generate_btn.clicked.connect(self.generate_comparison_report)
         self.generate_btn.setEnabled(False)
+        scroll_layout.addWidget(self.generate_btn)
         
-        self.export_btn = QPushButton("📊 تصدير التقرير")
+        self.export_btn = QPushButton("📤 تصدير التقرير")
+        self.export_btn.setProperty("class", "btn-secondary")
         self.export_btn.clicked.connect(self.export_comparison_report)
         self.export_btn.setEnabled(False)
+        scroll_layout.addWidget(self.export_btn)
         
-        control_layout.addWidget(self.generate_btn)
-        control_layout.addWidget(self.export_btn)
-        control_group.setLayout(control_layout)
+        # Stats
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep3)
         
-        # الإحصائيات العامة
-        stats_group = QGroupBox("📈 الإحصائيات العامة")
-        stats_layout = QVBoxLayout()
+        stats_label = QLabel("📈 الإحصائيات العامة")
+        stats_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(stats_label)
         
-        self.total_days_label = QLabel("عدد الأيام: 0")
-        self.total_children_label = QLabel("عدد الأطفال: 0")
-        self.avg_attendance_label = QLabel("متوسط الحضور: 0%")
-        self.best_day_label = QLabel("أفضل يوم: -")
-        self.worst_day_label = QLabel("أسوأ يوم: -")
+        self.total_days_label = self.create_stat_frame("📅 عدد الأيام", "0")
+        self.total_children_label = self.create_stat_frame("👥 عدد الأطفال", "0")
+        self.avg_attendance_label = self.create_stat_frame("📊 متوسط الحضور", "0%")
+        self.best_day_label = self.create_stat_frame("⭐ أفضل يوم", "-")
+        self.worst_day_label = self.create_stat_frame("⚠️ أسوأ يوم", "-")
         
-        for label in [self.total_days_label, self.total_children_label, self.avg_attendance_label,
-                     self.best_day_label, self.worst_day_label]:
-            label.setStyleSheet("""
-                QLabel {
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #ecf0f1;
-                    border-radius: 5px;
-                    margin: 2px;
-                    color: #2c3e50;
-                }
-            """)
-            stats_layout.addWidget(label)
+        scroll_layout.addWidget(self.total_days_label)
+        scroll_layout.addWidget(self.total_children_label)
+        scroll_layout.addWidget(self.avg_attendance_label)
+        scroll_layout.addWidget(self.best_day_label)
+        scroll_layout.addWidget(self.worst_day_label)
         
-        stats_group.setLayout(stats_layout)
+        scroll_layout.addStretch()
         
-        left_layout.addWidget(title_label)
-        left_layout.addWidget(period_group)
-        left_layout.addWidget(class_group)
-        left_layout.addWidget(control_group)
-        left_layout.addWidget(stats_group)
-        left_layout.addStretch()
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
-        left_panel.setLayout(left_layout)
+        main_layout.addWidget(left_panel)
         
-        # اللوحة اليمنى: عرض النتائج
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Results
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        # تبويبات للعرض
+        # Tabs
         self.tabs = QTabWidget()
         
-        # تبويب الملخص
         self.summary_tab = QWidget()
         self.setup_summary_tab()
         
-        # تبويب التفاصيل
         self.details_tab = QWidget()
         self.setup_details_tab()
         
-        # تبويب المقارنة
         self.comparison_tab = QWidget()
         self.setup_comparison_tab()
         
-        # تبويب المتابعة
         self.followup_tab = QWidget()
         self.setup_followup_tab()
         
-        self.tabs.addTab(self.summary_tab, "📋 الملخص العام")
-        self.tabs.addTab(self.details_tab, "📊 التفاصيل اليومية")
-        self.tabs.addTab(self.comparison_tab, "📈 مقارنة الأطفال")
-        self.tabs.addTab(self.followup_tab, "🎯 توصيات المتابعة")
+        self.tabs.addTab(self.summary_tab, "📋 الملخص")
+        self.tabs.addTab(self.details_tab, "📊 التفاصيل")
+        self.tabs.addTab(self.comparison_tab, "📈 المقارنة")
+        self.tabs.addTab(self.followup_tab, "🎯 المتابعة")
         
         right_layout.addWidget(self.tabs)
-        right_panel.setLayout(right_layout)
+        main_layout.addWidget(right_panel, 1)
         
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([400, 600])
-        
-        main_layout.addWidget(splitter)
         self.setLayout(main_layout)
+    
+    def create_stat_frame(self, label_text, value_text):
+        """Create a stat frame widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
+        
+        lbl = QLabel(label_text)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value_text)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_frame(self, frame, value):
+        """Update stat frame value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
     
     def setup_summary_tab(self):
         """إعداد تبويب الملخص العام"""
@@ -327,16 +353,8 @@ class ComparisonReportTab(QWidget):
         
         # معلومات التصفية
         self.filter_info_label = QLabel("جاري عرض جميع الأيام")
-        self.filter_info_label.setStyleSheet("""
-            QLabel {
-                color: #e74c3c;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #fdf2e9;
-                border-radius: 5px;
-                margin-bottom: 5px;
-            }
-        """)
+        self.filter_info_label.setProperty("class", "filter-info-danger")
+
         layout.addWidget(self.filter_info_label)
         
         self.summary_table = QTableWidget()
@@ -358,16 +376,8 @@ class ComparisonReportTab(QWidget):
         
         # معلومات التصفية
         self.details_filter_label = QLabel("جاري عرض جميع الأيام")
-        self.details_filter_label.setStyleSheet("""
-            QLabel {
-                color: #e74c3c;
-                font-weight: bold;
-                padding: 5px;
-                background-color: #fdf2e9;
-                border-radius: 5px;
-                margin-bottom: 5px;
-            }
-        """)
+        self.details_filter_label.setProperty("class", "filter-info-danger")
+
         layout.addWidget(self.details_filter_label)
         
         # اختيار التاريخ
@@ -449,52 +459,20 @@ class ComparisonReportTab(QWidget):
         followup_stats_layout = QHBoxLayout()
         
         self.excellent_label = QLabel("ممتاز: 0")
-        self.excellent_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #27ae60;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.excellent_label.setProperty("class", "status-excellent")
+
         
         self.good_label = QLabel("جيد: 0")
-        self.good_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #3498db;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.good_label.setProperty("class", "status-good")
+
         
         self.need_followup_label = QLabel("يحتاج متابعة: 0")
-        self.need_followup_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #f39c12;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.need_followup_label.setProperty("class", "status-warning")
+
         
         self.urgent_label = QLabel("متابعة عاجلة: 0")
-        self.urgent_label.setStyleSheet("""
-            QLabel {
-                font-weight: bold;
-                padding: 10px;
-                background-color: #e74c3c;
-                color: white;
-                border-radius: 5px;
-                margin: 2px;
-            }
-        """)
+        self.urgent_label.setProperty("class", "status-urgent")
+
         
         followup_stats_layout.addWidget(self.excellent_label)
         followup_stats_layout.addWidget(self.good_label)
@@ -773,28 +751,16 @@ class ComparisonReportTab(QWidget):
             days_text = ", ".join([arabic_days.get(day, day) for day in self.service_days_list])
             filter_text += f"\n🗓️ الأيام المعروضة: {days_text}"
             
-            self.filter_info_label.setStyleSheet("""
-                QLabel {
-                    color: #27ae60;
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #e8f6f3;
-                    border-radius: 5px;
-                    margin-bottom: 5px;
-                }
-            """)
+            self.filter_info_label.setProperty("class", "filter-info-success")
+            self.filter_info_label.style().unpolish(self.filter_info_label)
+            self.filter_info_label.style().polish(self.filter_info_label)
+
         else:
             filter_text = "📅 جاري عرض جميع الأيام في الفترة"
-            self.filter_info_label.setStyleSheet("""
-                QLabel {
-                    color: #3498db;
-                    font-weight: bold;
-                    padding: 8px;
-                    background-color: #ebf5fb;
-                    border-radius: 5px;
-                    margin-bottom: 5px;
-                }
-            """)
+            self.filter_info_label.setProperty("class", "filter-info-primary")
+            self.filter_info_label.style().unpolish(self.filter_info_label)
+            self.filter_info_label.style().polish(self.filter_info_label)
+
         
         self.filter_info_label.setText(filter_text)
         self.details_filter_label.setText(filter_text)
@@ -1143,11 +1109,11 @@ class ComparisonReportTab(QWidget):
         best_day = max(daily_stats, key=lambda x: x['rate'])
         worst_day = min(daily_stats, key=lambda x: x['rate'])
         
-        self.total_days_label.setText(f"عدد الأيام: {total_days}")
-        self.total_children_label.setText(f"عدد الأطفال: {total_children}")
-        self.avg_attendance_label.setText(f"متوسط الحضور: {avg_attendance:.1f}%")
-        self.best_day_label.setText(f"أفضل يوم: {best_day['date']} ({best_day['rate']:.1f}%)")
-        self.worst_day_label.setText(f"أسوأ يوم: {worst_day['date']} ({worst_day['rate']:.1f}%)")
+        self.update_stat_frame(self.total_days_label, str(total_days))
+        self.update_stat_frame(self.total_children_label, str(total_children))
+        self.update_stat_frame(self.avg_attendance_label, f"{avg_attendance:.1f}%")
+        self.update_stat_frame(self.best_day_label, f"{best_day['date']} ({best_day['rate']:.1f}%)")
+        self.update_stat_frame(self.worst_day_label, f"{worst_day['date']} ({worst_day['rate']:.1f}%)")
     
     def get_attendance_level(self, rate):
         """الحصول على مستوى الحضور"""

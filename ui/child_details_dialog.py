@@ -5,6 +5,12 @@ from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
 from PyQt5.QtCore import Qt
 from utils.database import DatabaseManager
 
+import matplotlib
+matplotlib.use('Qt5Agg')
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+
 class ChildDetailsDialog(QDialog):
     def __init__(self, child_data, parent=None):
         super().__init__(parent)
@@ -37,10 +43,15 @@ class ChildDetailsDialog(QDialog):
         self.notes_tab = QWidget()
         self.setup_notes_tab()
         
+        # Stats Tab
+        self.stats_tab = QWidget()
+        self.setup_stats_tab()
+        
         self.tabs.addTab(self.basic_info_tab, "المعلومات الأساسية")
         self.tabs.addTab(self.contact_info_tab, "معلومات الاتصال")
         self.tabs.addTab(self.address_info_tab, "العنوان")
         self.tabs.addTab(self.notes_tab, "ملاحظات")
+        self.tabs.addTab(self.stats_tab, "إحصائيات")
         
         layout.addWidget(self.tabs)
         
@@ -48,37 +59,13 @@ class ChildDetailsDialog(QDialog):
         button_layout = QHBoxLayout()
         
         self.save_btn = QPushButton("💾 حفظ التعديلات")
-        self.save_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #27ae60, stop: 1 #2ecc71);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #2ecc71, stop: 1 #27ae60);
-            }
-        """)
+        self.save_btn.setProperty("class", "btn-success")
+
         self.save_btn.clicked.connect(self.save_changes)
         
         self.close_btn = QPushButton("إغلاق")
-        self.close_btn.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #e74c3c, stop: 1 #c0392b);
-                color: white;
-                font-weight: bold;
-                padding: 10px;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #c0392b, stop: 1 #e74c3c);
-            }
-        """)
+        self.close_btn.setProperty("class", "btn-danger")
+
         self.close_btn.clicked.connect(self.close)
         
         button_layout.addWidget(self.save_btn)
@@ -99,7 +86,8 @@ class ChildDetailsDialog(QDialog):
         # Code (read-only)
         self.code_input = QLineEdit()
         self.code_input.setReadOnly(True)
-        self.code_input.setStyleSheet("QLineEdit { background-color: #f8f9fa; }")
+        self.code_input.setReadOnly(True)
+
         
         # Name
         self.name_input = QLineEdit()
@@ -180,6 +168,75 @@ class ChildDetailsDialog(QDialog):
         
         self.notes_tab.setLayout(layout)
     
+    def setup_stats_tab(self):
+        layout = QVBoxLayout()
+        
+        if not self.child_data:
+            layout.addWidget(QLabel("لا توجد بيانات متاحة"))
+            self.stats_tab.setLayout(layout)
+            return
+
+        # Calculate Stats
+        all_dates = self.db.get_attendance_dates()
+        total_days = len(all_dates)
+        present_days = 0
+        
+        attendance_data = self.db.load_data().get('attendance', {})
+        child_code = str(self.child_data.get('code', '')).strip()
+        
+        for date_str, attendees in attendance_data.items():
+            if child_code in attendees:
+                present_days += 1
+                
+        absent_days = total_days - present_days
+        attendance_percentage = (present_days / total_days * 100) if total_days > 0 else 0
+        
+        # Summary Labels
+        info_layout = QHBoxLayout()
+        total_label = QLabel(f"إجمالي أيام الخدمة: {total_days}")
+        present_label = QLabel(f"أيام الحضور: {present_days}")
+        absent_label = QLabel(f"أيام الغياب: {absent_days}")
+        percent_label = QLabel(f"نسبة الحضور: {attendance_percentage:.1f}%")
+        
+        # Style labels for emphasis
+        for lbl in [total_label, present_label, absent_label, percent_label]:
+            lbl.setStyleSheet("font-weight: bold; font-size: 14px; padding: 5px;")
+            
+        info_layout.addWidget(total_label)
+        info_layout.addWidget(present_label)
+        info_layout.addWidget(absent_label)
+        info_layout.addWidget(percent_label)
+        
+        layout.addLayout(info_layout)
+        
+        # Graph
+        if total_days > 0:
+            self.figure = Figure(figsize=(5, 4), dpi=100)
+            self.canvas = FigureCanvas(self.figure)
+            
+            ax = self.figure.add_subplot(111)
+            
+            # Pie Chart Data
+            labels = ['حضور', 'غياب']
+            sizes = [present_days, absent_days]
+            colors = ['#2ecc71', '#e74c3c']  # Green, Red
+            explode = (0.1, 0)  # offset the 1st slice (Present)
+            
+            patches, texts, autotexts = ax.pie(sizes, explode=explode, labels=labels, colors=colors,
+                    autopct='%1.1f%%', shadow=True, startangle=90)
+            
+            # Enhance font for Arabic support if needed (matplotlib might need font config, but basic labels often work)
+            # For now relying on default font or system fallback
+            
+            ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+            ax.set_title("نسبة الحضور والغياب")
+            
+            layout.addWidget(self.canvas)
+        else:
+            layout.addWidget(QLabel("لا توجد بيانات حضور مسجلة في النظام لعرض الرسم البياني"))
+            
+        self.stats_tab.setLayout(layout)
+
     def load_child_data(self):
         """Load child data into form fields"""
         if not self.child_data:

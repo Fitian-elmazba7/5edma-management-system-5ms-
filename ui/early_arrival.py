@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QComboBox, QGroupBox, QPushButton, QMessageBox,
                              QSplitter, QFrame, QRadioButton,
                              QButtonGroup, QSpinBox, QDialog, QFormLayout,
-                             QDialogButtonBox)
+                             QDialogButtonBox, QScrollArea, QCheckBox)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from utils.database import DatabaseManager
@@ -118,64 +118,81 @@ class EarlyArrivalTab(QWidget):
         
     def setup_ui(self):
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(24, 24, 24, 24)
         
-        # Splitter لتقسيم الشاشة
-        splitter = QSplitter(Qt.Horizontal)
+        # ═══════════════════════════════════════════════════════════════
+        # LEFT PANEL: Controls & Stats
+        # ═══════════════════════════════════════════════════════════════
+        left_panel = QFrame()
+        left_panel.setProperty("class", "dashboard-card")
+        left_panel.setFixedWidth(340)
+        left_layout = QVBoxLayout(left_panel)
+        left_layout.setContentsMargins(20, 20, 20, 20)
         
-        # اللوحة اليسرى: التحكم
-        left_panel = QWidget()
-        left_layout = QVBoxLayout()
+        # Header
+        header_widget = QWidget()
+        header = QHBoxLayout(header_widget)
+        header_icon = QLabel("𓃬")
+        header_icon.setProperty("class", "card-icon")
+        header_title = QLabel("الحضور المبكر")
+        header_title.setProperty("class", "card-title")
+        header.addWidget(header_icon)
+        header.addWidget(header_title)
+        header.addStretch()
+        left_layout.addWidget(header_widget)
         
-        # عنوان القسم
-        title_label = QLabel("𓃷 مكافأة الحضور المبكر")
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 20px;
-                font-weight: bold;
-                color: white;
-                padding: 15px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #27ae60, stop:1 #2ecc71);
-                border-radius: 8px;
-                margin: 5px;
-            }
-        """)
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setProperty("class", "card-separator")
+        left_layout.addWidget(sep)
         
-        # مجموعة الإعدادات
-        settings_group = QGroupBox("🕒 إعدادات التقرير")
-        settings_layout = QVBoxLayout()
+        # Scroll Area
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.viewport().setStyleSheet("background-color: #141420;")
+        scroll.setStyleSheet("background-color: #141420; border: none;")
         
-        # اختيار التاريخ
-        settings_layout.addWidget(QLabel("📅 اختر تاريخ الخدمة:"))
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #141420;")
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setSpacing(16)
+        scroll_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Date Selection
+        date_label = QLabel("📅 اختر التاريخ")
+        date_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(date_label)
+        
         self.date_selector = QComboBox()
+        self.date_selector.setProperty("class", "dashboard-combo")
+        self.date_selector.setMinimumHeight(40)
         self.date_selector.currentTextChanged.connect(self.load_early_arrivals)
-        settings_layout.addWidget(self.date_selector)
+        scroll_layout.addWidget(self.date_selector)
         
-        # إعدادات الوقت مع AM/PM
-        time_settings_frame = QFrame()
-        time_settings_layout = QHBoxLayout()
+        # Time Settings
+        time_section = QLabel("⏰ الوقت المحدد للحضور")
+        time_section.setProperty("class", "input-label")
+        scroll_layout.addWidget(time_section)
         
-        # الساعات
-        hours_layout = QVBoxLayout()
-        hours_layout.addWidget(QLabel("الساعات:"))
+        time_frame = QFrame()
+        time_frame.setStyleSheet("background: #0f0f1a; border-radius: 8px; padding: 8px;")
+        time_layout = QHBoxLayout(time_frame)
+        time_layout.setSpacing(8)
+        
         self.hours_spin = QSpinBox()
         self.hours_spin.setRange(1, 12)
-        self.hours_spin.setValue(6)  # قبل الخدمة بساعة
+        self.hours_spin.setValue(6)
+        self.hours_spin.setProperty("class", "dashboard-input")
         self.hours_spin.valueChanged.connect(self.load_early_arrivals)
-        hours_layout.addWidget(self.hours_spin)
         
-        # الدقائق
-        minutes_layout = QVBoxLayout()
-        minutes_layout.addWidget(QLabel("الدقائق:"))
         self.minutes_spin = QSpinBox()
         self.minutes_spin.setRange(0, 59)
-        self.minutes_spin.setValue(30)  # قبل الخدمة بنصف ساعة
+        self.minutes_spin.setValue(30)
+        self.minutes_spin.setProperty("class", "dashboard-input")
         self.minutes_spin.valueChanged.connect(self.load_early_arrivals)
-        minutes_layout.addWidget(self.minutes_spin)
         
-        # AM/PM
-        ampm_layout = QVBoxLayout()
-        ampm_layout.addWidget(QLabel("الفترة:"))
         self.ampm_group = QButtonGroup()
         self.am_radio = QRadioButton("AM")
         self.pm_radio = QRadioButton("PM")
@@ -183,134 +200,147 @@ class EarlyArrivalTab(QWidget):
         self.ampm_group.addButton(self.am_radio)
         self.ampm_group.addButton(self.pm_radio)
         self.am_radio.toggled.connect(self.load_early_arrivals)
-        self.pm_radio.toggled.connect(self.load_early_arrivals)
         
-        ampm_layout.addWidget(self.am_radio)
-        ampm_layout.addWidget(self.pm_radio)
+        time_layout.addWidget(QLabel("الساعة:"))
+        time_layout.addWidget(self.hours_spin)
+        time_layout.addWidget(QLabel(":"))
+        time_layout.addWidget(self.minutes_spin)
+        time_layout.addWidget(self.am_radio)
+        time_layout.addWidget(self.pm_radio)
         
-        time_settings_layout.addLayout(hours_layout)
-        time_settings_layout.addLayout(minutes_layout)
-        time_settings_layout.addLayout(ampm_layout)
-        time_settings_frame.setLayout(time_settings_layout)
+        scroll_layout.addWidget(time_frame)
         
-        settings_layout.addWidget(QLabel("⏰ الوقت المحدد للحضور المبكر:"))
-        settings_layout.addWidget(time_settings_frame)
-        
-        # وقت الخدمة الرسمي
-        service_time_layout = QHBoxLayout()
-        service_time_layout.addWidget(QLabel("⛪ وقت الخدمة الرسمي:"))
+        # Service Time Info
+        service_layout = QHBoxLayout()
         self.service_time_label = QLabel("07:00 PM - الخميس")
-        self.service_time_label.setStyleSheet("QLabel { font-weight: bold; color: #e74c3c; }")
-        
-        self.change_service_btn = QPushButton("تغيير الإعدادات")
+        self.service_time_label.setProperty("class", "stat-subtitle")
+        self.change_service_btn = QPushButton("⚙️")
+        self.change_service_btn.setProperty("class", "btn-icon")
+        self.change_service_btn.setFixedSize(32, 32)
         self.change_service_btn.clicked.connect(self.change_service_settings)
+        service_layout.addWidget(QLabel("⛪"))
+        service_layout.addWidget(self.service_time_label)
+        service_layout.addStretch()
+        service_layout.addWidget(self.change_service_btn)
+        scroll_layout.addLayout(service_layout)
         
-        service_time_layout.addWidget(self.service_time_label)
-        service_time_layout.addWidget(self.change_service_btn)
-        service_time_layout.addStretch()
+        # Separator
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep2)
         
-        settings_layout.addLayout(service_time_layout)
+        # Stats Section
+        stats_label = QLabel("📊 الإحصائيات")
+        stats_label.setProperty("class", "input-label")
+        scroll_layout.addWidget(stats_label)
         
-        # أزرار التحكم
-        button_layout = QHBoxLayout()
-        self.filter_btn = QPushButton("🔍 تصفية الحضور المبكر")
-        self.filter_btn.clicked.connect(self.load_early_arrivals)
+        # Stats in frames
+        self.total_attendance_label = self.create_stat_frame("👥 إجمالي الحضور", "0")
+        self.early_arrival_label = self.create_stat_frame("✅ الحضور المبكر", "0")
+        self.percentage_label = self.create_stat_frame("📊 النسبة", "0%")
+        self.avg_arrival_label = self.create_stat_frame("⏱️ متوسط الوقت", "--:--")
         
-        self.export_btn = QPushButton("📊 تصدير التقرير")
+        scroll_layout.addWidget(self.total_attendance_label)
+        scroll_layout.addWidget(self.early_arrival_label)
+        scroll_layout.addWidget(self.percentage_label)
+        scroll_layout.addWidget(self.avg_arrival_label)
+        
+        # Action Buttons
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setProperty("class", "card-separator")
+        scroll_layout.addWidget(sep3)
+        
+        self.export_btn = QPushButton("📤 تصدير التقرير")
+        self.export_btn.setProperty("class", "btn-success")
+        self.export_btn.setMinimumHeight(40)
         self.export_btn.clicked.connect(self.export_early_arrivals)
+        scroll_layout.addWidget(self.export_btn)
         
-        self.refresh_btn = QPushButton("🔄 تحديث البيانات")
+        self.refresh_btn = QPushButton("🔄 تحديث")
+        self.refresh_btn.setProperty("class", "btn-secondary")
+        self.refresh_btn.setMinimumHeight(40)
         self.refresh_btn.clicked.connect(self.refresh_data)
+        scroll_layout.addWidget(self.refresh_btn)
         
-        button_layout.addWidget(self.filter_btn)
-        button_layout.addWidget(self.export_btn)
-        button_layout.addWidget(self.refresh_btn)
+        scroll_layout.addStretch()
         
-        settings_layout.addLayout(button_layout)
+        scroll.setWidget(scroll_content)
+        left_layout.addWidget(scroll)
         
-        settings_group.setLayout(settings_layout)
+        main_layout.addWidget(left_panel)
         
-        # الإحصائيات
-        stats_group = QGroupBox("📈 الإحصائيات")
-        stats_layout = QVBoxLayout()
+        # ═══════════════════════════════════════════════════════════════
+        # RIGHT PANEL: Table
+        # ═══════════════════════════════════════════════════════════════
+        right_panel = QFrame()
+        right_panel.setProperty("class", "dashboard-card")
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setSpacing(12)
+        right_layout.setContentsMargins(20, 20, 20, 20)
         
-        self.total_attendance_label = QLabel("👥 إجمالي الحضور: 0")
-        self.early_arrival_label = QLabel("✅ الحضور المبكر: 0")
-        self.percentage_label = QLabel("📊 النسبة: 0%")
-        self.avg_arrival_label = QLabel("⏱️ متوسط الوقت: --:--")
+        # Header
+        table_header = QHBoxLayout()
+        table_icon = QLabel("📊")
+        table_icon.setProperty("class", "card-icon")
+        table_title = QLabel("قائمة الحضور المبكر")
+        table_title.setProperty("class", "card-title")
+        table_header.addWidget(table_icon)
+        table_header.addWidget(table_title)
+        table_header.addStretch()
         
-        for label in [self.total_attendance_label, self.early_arrival_label, 
-                     self.percentage_label, self.avg_arrival_label]:
-            label.setStyleSheet("""
-                QLabel { 
-                    font-weight: bold; 
-                    padding: 8px; 
-                    background-color: #f8f9fa;
-                    border-radius: 5px;
-                    margin: 2px;
-                }
-            """)
-            stats_layout.addWidget(label)
+        self.filter_info_label = QLabel("")
+        self.filter_info_label.setProperty("class", "stat-subtitle")
+        table_header.addWidget(self.filter_info_label)
+        right_layout.addLayout(table_header)
         
-        stats_group.setLayout(stats_layout)
+        sep4 = QFrame()
+        sep4.setFrameShape(QFrame.HLine)
+        sep4.setProperty("class", "card-separator")
+        right_layout.addWidget(sep4)
         
-        left_layout.addWidget(title_label)
-        left_layout.addWidget(settings_group)
-        left_layout.addWidget(stats_group)
-        left_layout.addStretch()
-        
-        left_panel.setLayout(left_layout)
-        
-        # اللوحة اليمنى: عرض البيانات
-        right_panel = QWidget()
-        right_layout = QVBoxLayout()
-        
-        # معلومات التصفية
-        self.filter_info_label = QLabel("⚡ الأطفال الذين حضروا قبل الساعة: --:--")
-        self.filter_info_label.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #2c3e50;
-                padding: 10px;
-                background-color: #ecf0f1;
-                border-radius: 5px;
-            }
-        """)
-        right_layout.addWidget(self.filter_info_label)
-        
-        # جدول الحضور المبكر
+        # Table
         self.early_arrival_table = QTableWidget()
+        self.early_arrival_table.setProperty("class", "dashboard-table")
         self.early_arrival_table.setColumnCount(7)
         self.early_arrival_table.setHorizontalHeaderLabels([
             "الكود", "الاسم", "الصف", "الوقت", "نظام الوقت", "التاريخ", "الحالة"
         ])
-        self.early_arrival_table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.early_arrival_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.early_arrival_table.setSortingEnabled(True)
+        self.early_arrival_table.setAlternatingRowColors(True)
+        right_layout.addWidget(self.early_arrival_table, 1)
         
-        # ضبط أبعاد الأعمدة
-        self.early_arrival_table.setColumnWidth(0, 80)   # الكود
-        self.early_arrival_table.setColumnWidth(1, 150)  # الاسم
-        self.early_arrival_table.setColumnWidth(2, 100)  # الصف
-        self.early_arrival_table.setColumnWidth(3, 80)   # الوقت
-        self.early_arrival_table.setColumnWidth(4, 100)  # نظام الوقت
-        self.early_arrival_table.setColumnWidth(5, 100)  # التاريخ
-        self.early_arrival_table.setColumnWidth(6, 120)  # الحالة
-        
-        right_layout.addWidget(self.early_arrival_table)
-        
-        right_panel.setLayout(right_layout)
-        
-        # إضافة اللوحات إلى splitter
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setSizes([400, 600])
-        
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(right_panel, 1)
         self.setLayout(main_layout)
         
-        # تحميل وقت الخدمة الرسمي
         self.load_service_time()
+    
+    def create_stat_frame(self, label_text, value_text):
+        """Create a stat frame widget"""
+        frame = QFrame()
+        frame.setStyleSheet("background: #0f0f1a; border-radius: 6px;")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
+        
+        lbl = QLabel(label_text)
+        lbl.setProperty("class", "stat-subtitle")
+        
+        val = QLabel(value_text)
+        val.setStyleSheet("font-weight: 600; color: #e2e8f0;")
+        
+        layout.addWidget(lbl)
+        layout.addStretch()
+        layout.addWidget(val)
+        
+        return frame
+    
+    def update_stat_frame(self, frame, value):
+        """Update stat frame value"""
+        labels = frame.findChildren(QLabel)
+        if len(labels) >= 2:
+            labels[1].setText(str(value))
     
     def load_service_time(self):
         """تحميل وقت الخدمة الرسمي من الإعدادات"""
@@ -499,23 +529,22 @@ class EarlyArrivalTab(QWidget):
     
     def update_stats(self, total_attendance, early_arrival_count, arrival_times):
         """تحديث الإحصائيات"""
-        self.total_attendance_label.setText(f"👥 إجمالي الحضور: {total_attendance}")
-        self.early_arrival_label.setText(f"✅ الحضور المبكر: {early_arrival_count}")
+        self.update_stat_frame(self.total_attendance_label, total_attendance)
+        self.update_stat_frame(self.early_arrival_label, early_arrival_count)
         
         if total_attendance > 0:
             percentage = (early_arrival_count / total_attendance) * 100
-            self.percentage_label.setText(f"📊 النسبة: {percentage:.1f}%")
+            self.update_stat_frame(self.percentage_label, f"{percentage:.0f}%")
         else:
-            self.percentage_label.setText("📊 النسبة: 0%")
+            self.update_stat_frame(self.percentage_label, "0%")
         
-        # حساب متوسط وقت الحضور
         if arrival_times:
             avg_minutes = sum(arrival_times) // len(arrival_times)
             avg_time = self.minutes_to_time(avg_minutes)
             avg_time_12h = self.convert_to_12h(avg_time)
-            self.avg_arrival_label.setText(f"⏱️ متوسط الوقت: {avg_time_12h}")
+            self.update_stat_frame(self.avg_arrival_label, avg_time_12h)
         else:
-            self.avg_arrival_label.setText("⏱️ متوسط الوقت: --:--")
+            self.update_stat_frame(self.avg_arrival_label, "--:--")
     
     def refresh_data(self):
         """تحديث البيانات"""

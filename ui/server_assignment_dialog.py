@@ -26,29 +26,13 @@ class ServerAssignmentDialog(QDialog):
         # عنوان النافذة
         title_label = QLabel(f"🎯 توزيع متابعة الغياب على الخدام - {self.date}")
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 18px;
-                font-weight: bold;
-                color: white;
-                padding: 12px;
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 #e74c3c, stop:0.5 #c0392b, stop:1 #e74c3c);
-                border-radius: 8px;
-                margin: 5px;
-            }
-        """)
+        title_label.setProperty("class", "page-title")
+
         
         # معلومات الإحصائيات
         stats_frame = QFrame()
-        stats_frame.setStyleSheet("""
-            QFrame {
-                background-color: #ecf0f1;
-                border: 2px solid #bdc3c7;
-                border-radius: 8px;
-                padding: 10px;
-            }
-        """)
+        stats_frame.setProperty("class", "stats-container")
+
         stats_layout = QHBoxLayout()
         
         total_absent = len(self.absent_children)
@@ -65,7 +49,8 @@ class ServerAssignmentDialog(QDialog):
         
         for text in stats_labels:
             label = QLabel(text)
-            label.setStyleSheet("QLabel { font-weight: bold; padding: 8px; background-color: #3498db; color: white; border-radius: 5px; }")
+            label.setProperty("class", "status-good")
+
             stats_layout.addWidget(label)
         
         stats_frame.setLayout(stats_layout)
@@ -199,7 +184,8 @@ class ServerAssignmentDialog(QDialog):
         # معلومات التوزيع
         info_label = QLabel()
         info_label.setObjectName(f"info_{class_name}")
-        info_label.setStyleSheet("QLabel { font-weight: bold; color: #2c3e50; padding: 5px; }")
+        info_label.setProperty("class", "info-label")
+
         layout.addWidget(info_label)
         
         # جدول التوزيع مع جميع البيانات

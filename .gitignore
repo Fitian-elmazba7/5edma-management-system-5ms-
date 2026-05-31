@@ -1,62 +1,52 @@
-ui/__pycache__/absence.cpython-311.pyc
-ui/__pycache__/attendance_report.cpython-311.pyc
-ui/__pycache__/child_details_dialog.cpython-311.pyc
-ui/__pycache__/comparison_report.cpython-311.pyc
-ui/__pycache__/data_management.cpython-311.pyc
-ui/__pycache__/early_arrival.cpython-311.pyc
-ui/__pycache__/main_window.cpython-311.pyc
-ui/__pycache__/modern_widget.cpython-311.pyc
-ui/__pycache__/registration_tab.cpython-311.pyc
-ui/__pycache__/server_assignment_dialog.cpython-311.pyc
-ui/__pycache__/absence.cpython-311.pyc
-ui/__pycache__/attendance_report.cpython-311.pyc
-ui/__pycache__/child_details_dialog.cpython-311.pyc
-ui/__pycache__/comparison_report.cpython-311.pyc
-ui/__pycache__/data_management.cpython-311.pyc
-ui/__pycache__/early_arrival.cpython-311.pyc
-ui/__pycache__/main_window.cpython-311.pyc
-ui/__pycache__/modern_widget.cpython-311.pyc
-ui/__pycache__/registration_tab.cpython-311.pyc
-ui/__pycache__/server_assignment_dialog.cpython-311.pyc
-*__pycache__
-*.pyc
-utils/__pycache__/style_manager.cpython-311.pyc
-backups/database_backup_20251227_001322.json
-backups/database_backup_20251227_010811.json
-backups/database_backup_20251227_010819.json
-data/current_session.json
-data/database.json
-backups/database_backup_20251227_011541.json
-backups/database_backup_20251227_014152.json
-backups/database_backup_20251227_014731.json
-backups/database_backup_20251227_022413.json
-backups/database_backup_20251227_024231.json
-backups/database_backup_20251227_024914.json
-backups/database_backup_20251227_025233.json
-backups
-data/
-data/current_session.json
-data/database.json
-./data/*
-./backups/*
-build/ChurchAttendanceSystem/Analysis-00.toc
-build/ChurchAttendanceSystem/base_library.zip
-build/ChurchAttendanceSystem/ChurchAttendanceSystem.pkg
-build/ChurchAttendanceSystem/EXE-00.toc
-build/ChurchAttendanceSystem/PKG-00.toc
-build/ChurchAttendanceSystem/PYZ-00.pyz
-build/ChurchAttendanceSystem/PYZ-00.toc
-build/ChurchAttendanceSystem/warn-ChurchAttendanceSystem.txt
-build/ChurchAttendanceSystem/xref-ChurchAttendanceSystem.html
-dist/ChurchAttendanceSystem.exe
-dist/fonts/fitian_elmazba7.png
-ui/__pycache__/main_window.cpython-311.pyc
-*/__pycache__
-*.pyc
-ChurchAttendanceSystem.spec
-ui/__pycache__/absence.cpython-311.pyc
-ui/__pycache__/attendance_report.cpython-311.pyc
-ui/__pycache__/comparison_report.cpython-311.pyc
-ui/__pycache__/data_management.cpython-311.pyc
-ui/__pycache__/early_arrival.cpython-311.pyc
-ui/__pycache__/registration_tab.cpython-311.pyc
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Electron
+out/
+release/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Tests
+coverage/
+.nyc_output/
+
+# Temporary
+*.tmp
+temp/
+graphify-out/

@@ -1,0 +1,53 @@
+{
+  "name": "@5edma/electron",
+  "version": "1.0.0",
+  "description": "5edma Desktop Application - Electron wrapper with SQLite offline support",
+  "type": "module",
+  "main": "dist/main.js",
+  "preload": "dist/preload.js",
+  "scripts": {
+    "dev": "electron dist/main.js",
+    "build": "tsc && electron-builder",
+    "dist": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.2.2",
+    "firebase": "^10.7.0"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "typescript": "^5.3.3",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^20.10.5"
+  },
+  "build": {
+    "appId": "com.5edma.church",
+    "productName": "5edma Management System",
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  }
+}

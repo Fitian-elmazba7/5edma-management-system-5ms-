@@ -1,0 +1,24 @@
+{
+  "name": "5edma-management-system",
+  "version": "2.0.0",
+  "description": "Modern rebuild of 5edma Church Attendance Management System",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "install": "pnpm install",
+    "dev": "pnpm --filter '*' --parallel dev",
+    "build": "pnpm --filter web build && pnpm --filter electron build",
+    "web:dev": "pnpm --filter web dev",
+    "web:build": "pnpm --filter web build",
+    "electron:dev": "pnpm --filter electron dev",
+    "electron:build": "pnpm --filter electron build",
+    "electron:dist": "pnpm --filter electron dist"
+  },
+  "workspaces": [
+    "apps/web",
+    "apps/electron",
+    "packages/shared"
+  ],
+  "devDependencies": {}
+}

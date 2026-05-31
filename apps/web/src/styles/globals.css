@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Glass Design System */
+:root {
+  --color-bg: #020408;
+  --color-surface: rgba(8, 14, 26, 0.7);
+  --color-border: rgba(59, 130, 246, 0.2);
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-text: #e2e8f0;
+  --color-muted: #94a3b8;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
+  /* Glass effect */
+  --glass-blur: 16px;
+  --glass-saturation: 180%;
+}
+
+/* Glass Component Base */
+.glass {
+  @apply relative overflow-hidden;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  @apply glass p-6;
+}
+
+.glass-button {
+  @apply glass px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  @apply hover:bg-opacity-80 active:scale-95;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.glass-button-primary {
+  @apply glass-button bg-gradient-to-r from-blue-600 to-indigo-600;
+  @apply text-white hover:shadow-lg hover:shadow-blue-500/20;
+}
+
+.glass-button-secondary {
+  @apply glass-button border border-glass-border;
+  @apply text-glass-text hover:bg-blue-500/10;
+}
+
+.glass-button-danger {
+  @apply glass-button bg-red-600/80;
+  @apply text-white hover:bg-red-700;
+}
+
+.glass-button-success {
+  @apply glass-button bg-green-600/80;
+  @apply text-white hover:bg-green-700;
+}
+
+.glass-input {
+  @apply glass px-4 py-2 w-full text-glass-text;
+  @apply placeholder:text-glass-muted focus:outline-none focus:ring-2 focus:ring-blue-500/50;
+}
+
+.glass-select {
+  @apply glass px-4 py-2 text-glass-text;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50;
+  @apply appearance-none bg-no-repeat;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e2e8f0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.glass-table {
+  @apply w-full border-collapse;
+}
+
+.glass-table th {
+  @apply glass px-4 py-3 text-left font-semibold text-glass-text;
+  @apply border-b border-glass-border;
+}
+
+.glass-table td {
+  @apply px-4 py-3 border-b border-glass-border/50;
+}
+
+.glass-table tbody tr {
+  @apply hover:bg-blue-500/5 transition-colors;
+}
+
+/* Stat Card */
+.stat-card {
+  @apply glass p-4 rounded-lg;
+  @apply flex flex-col gap-2;
+}
+
+.stat-label {
+  @apply text-sm font-medium text-glass-muted;
+}
+
+.stat-value {
+  @apply text-2xl font-bold text-glass-text;
+}
+
+.stat-icon {
+  @apply w-8 h-8 text-glass-primary;
+}
+
+/* Child Card */
+.child-card {
+  @apply glass p-4 rounded-lg cursor-pointer;
+  @apply hover:shadow-lg hover:shadow-blue-500/20 transition-all;
+  @apply flex gap-3 items-start;
+}
+
+.child-avatar {
+  @apply w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600;
+  @apply flex items-center justify-center text-white font-bold text-lg flex-shrink-0;
+}
+
+.child-info {
+  @apply flex-1;
+}
+
+.child-name {
+  @apply font-semibold text-glass-text;
+}
+
+.child-class {
+  @apply text-sm text-glass-muted;
+}
+
+.child-rate {
+  @apply mt-2 inline-block px-2 py-1 rounded text-sm font-medium;
+  @apply bg-green-500/20 text-green-300;
+}
+
+/* Modal */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  @apply glass max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+.modal-header {
+  @apply p-6 border-b border-glass-border flex justify-between items-center;
+}
+
+.modal-title {
+  @apply text-2xl font-bold text-glass-text;
+}
+
+.modal-close {
+  @apply glass-button-secondary p-2;
+}
+
+.modal-body {
+  @apply p-6;
+}
+
+.modal-footer {
+  @apply p-6 border-t border-glass-border flex gap-3 justify-end;
+}
+
+/* Tab Navigation */
+.tab-list {
+  @apply flex gap-2 border-b border-glass-border overflow-x-auto;
+}
+
+.tab-trigger {
+  @apply px-4 py-3 font-medium text-glass-muted border-b-2 border-transparent;
+  @apply hover:text-glass-text hover:border-glass-primary transition-colors;
+  @apply cursor-pointer whitespace-nowrap;
+}
+
+.tab-trigger[data-state="active"] {
+  @apply text-glass-primary border-glass-primary;
+}
+
+/* Utility Classes */
+.text-gradient {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.fade-in {
+  @apply animate-in fade-in duration-300;
+}
+
+/* RTL Adjustments */
+[dir="rtl"] .glass-select {
+  background-position: left 0.75rem center;
+  padding-right: 1rem;
+  padding-left: 2.5rem;
+}
+
+[dir="rtl"] .child-card {
+  @apply flex-row-reverse;
+}
+
+[dir="rtl"] .modal-header {
+  @apply flex-row-reverse;
+}
+
+[dir="rtl"] .tab-list {
+  @apply flex-row-reverse;
+}
+
+[dir="rtl"] .modal-footer {
+  @apply flex-row-reverse;
+}

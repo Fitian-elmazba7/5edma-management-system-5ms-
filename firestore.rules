@@ -15,18 +15,6 @@ service cloud.firestore {
       return getRole() == 'admin';
     }
 
-    function isServant() {
-      return getRole() == 'servant';
-    }
-
-    function isViewer() {
-      return getRole() == 'viewer';
-    }
-
-    function isUser() {
-      return getRole() == 'user';
-    }
-
     // Returns true if user has any of the specified roles
     function hasRole(roles) {
       return getRole() in roles;

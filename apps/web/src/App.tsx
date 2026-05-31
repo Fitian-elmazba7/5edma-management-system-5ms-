@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useAuthStore } from './store/auth'
 import LoginPage from './pages/Login'
 import DashboardPage from './pages/Dashboard'
+import UsersPage from './pages/Users'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -26,13 +27,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            user ? <DashboardPage /> : <Navigate to="/login" replace />
-          }
-        />
+
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -41,7 +39,24 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        {/* Additional routes will be added in Phase 4 */}
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <UsersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirect root to dashboard if authenticated */}
+        <Route
+          path="/"
+          element={
+            user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          }
+        />
+
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

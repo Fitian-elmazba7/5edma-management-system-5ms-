@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
+import { GlassInput, GlassButton } from '../components/ui'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -29,44 +30,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-glass-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-glass-bg flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative gradient blobs */}
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-600/20 to-indigo-600/20 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full blur-3xl"></div>
+
+      <div className="w-full max-w-md relative z-10">
         <div className="glass-card">
           <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <span className="text-2xl">⛪</span>
+            </div>
             <h1 className="text-3xl font-bold text-gradient mb-2">
               نظام الخدمة
             </h1>
             <p className="text-glass-muted">إدارة الحضور والغياب</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-glass-text mb-2">
-                البريد الإلكتروني
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="glass-input"
-                placeholder="أدخل بريدك الإلكتروني"
-                disabled={loading}
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <GlassInput
+              label="البريد الإلكتروني"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="أدخل بريدك الإلكتروني"
+              disabled={loading}
+              error={localError ? 'البريد مطلوب' : undefined}
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-glass-text mb-2">
-                كلمة المرور
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="glass-input"
-                placeholder="أدخل كلمة المرور"
-                disabled={loading}
-              />
-            </div>
+            <GlassInput
+              label="كلمة المرور"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="أدخل كلمة المرور"
+              disabled={loading}
+              error={localError ? 'كلمة المرور مطلوبة' : undefined}
+            />
 
             {(error || localError) && (
               <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/50">
@@ -74,17 +74,29 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button
+            <GlassButton
               type="submit"
+              variant="primary"
+              fullWidth
+              loading={loading}
               disabled={loading}
-              className="w-full glass-button-primary"
             >
-              {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
-            </button>
+              تسجيل الدخول
+            </GlassButton>
           </form>
 
-          <p className="text-center text-glass-muted text-sm mt-6">
-            نظام الكنيسة القبطية الأرثوذكسية
+          <div className="mt-8 pt-6 border-t border-glass-border">
+            <p className="text-center text-glass-muted text-xs mb-3">
+              للاختبار استخدم:
+            </p>
+            <div className="space-y-1 text-xs text-glass-muted text-center">
+              <p>البريد: demo@example.com</p>
+              <p>كلمة المرور: demo123</p>
+            </div>
+          </div>
+
+          <p className="text-center text-glass-muted text-xs mt-6">
+            © الكنيسة القبطية الأرثوذكسية
           </p>
         </div>
       </div>

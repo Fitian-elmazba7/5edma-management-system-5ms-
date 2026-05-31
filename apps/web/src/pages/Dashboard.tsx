@@ -16,23 +16,31 @@ export default function DashboardPage() {
   const getNavItems = () => {
     const baseItems = [
       { label: 'لوحة البيانات', path: '/dashboard', roles: ['admin', 'servant', 'viewer', 'user'] },
+      { label: '📊 الإحصائيات', path: '/stats', roles: ['admin', 'servant', 'viewer', 'user'] },
     ]
 
     const roleBasedItems = {
       admin: [
-        { label: 'التسجيل اليومي', path: '/registration', roles: ['admin'] },
-        { label: 'إدارة البيانات', path: '/data', roles: ['admin'] },
-        { label: 'المستخدمين', path: '/users', roles: ['admin'] },
+        { label: '📝 التسجيل', path: '/registration', roles: ['admin'] },
+        { label: '📋 الغياب', path: '/absence', roles: ['admin'] },
+        { label: '📊 إدارة البيانات', path: '/data', roles: ['admin'] },
+        { label: '⏰ الحضور المبكر', path: '/early-arrival', roles: ['admin'] },
+        { label: '📋 تقرير الحضور', path: '/attendance-report', roles: ['admin'] },
+        { label: '📈 المقارنة', path: '/comparison', roles: ['admin'] },
+        { label: '👥 المستخدمين', path: '/users', roles: ['admin'] },
       ],
       servant: [
-        { label: 'التسجيل اليومي', path: '/registration', roles: ['servant'] },
-        { label: 'تقارير', path: '/reports', roles: ['servant'] },
+        { label: '📝 التسجيل', path: '/registration', roles: ['servant'] },
+        { label: '📋 الغياب', path: '/absence', roles: ['servant'] },
+        { label: '⏰ الحضور المبكر', path: '/early-arrival', roles: ['servant'] },
+        { label: '📋 تقرير الحضور', path: '/attendance-report', roles: ['servant'] },
+        { label: '📈 المقارنة', path: '/comparison', roles: ['servant'] },
       ],
       viewer: [
-        { label: 'التقارير', path: '/reports', roles: ['viewer', 'user'] },
+        { label: '📈 المقارنة', path: '/comparison', roles: ['viewer', 'user'] },
       ],
       user: [
-        { label: 'التقارير', path: '/reports', roles: ['user'] },
+        { label: '📈 المقارنة', path: '/comparison', roles: ['user'] },
       ],
     }
 

@@ -3,6 +3,13 @@ import { useEffect } from 'react'
 import { useAuthStore } from './store/auth'
 import LoginPage from './pages/Login'
 import DashboardPage from './pages/Dashboard'
+import RegistrationPage from './pages/Registration'
+import DashboardStatsPage from './pages/DashboardStats'
+import AbsencePage from './pages/Absence'
+import DataManagementPage from './pages/DataManagement'
+import EarlyArrivalPage from './pages/EarlyArrival'
+import AttendanceReportPage from './pages/AttendanceReport'
+import ComparisonReportPage from './pages/ComparisonReport'
 import UsersPage from './pages/Users'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -39,6 +46,66 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Feature Pages */}
+        <Route
+          path="/registration"
+          element={
+            <ProtectedRoute requiredRole={['admin', 'servant']}>
+              <RegistrationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stats"
+          element={
+            <ProtectedRoute>
+              <DashboardStatsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/absence"
+          element={
+            <ProtectedRoute requiredRole={['admin', 'servant']}>
+              <AbsencePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <DataManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/early-arrival"
+          element={
+            <ProtectedRoute requiredRole={['admin', 'servant']}>
+              <EarlyArrivalPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendance-report"
+          element={
+            <ProtectedRoute requiredRole={['admin', 'servant']}>
+              <AttendanceReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/comparison"
+          element={
+            <ProtectedRoute>
+              <ComparisonReportPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Routes */}
         <Route
           path="/users"
           element={

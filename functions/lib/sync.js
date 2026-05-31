@@ -36,7 +36,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.syncOfflineChanges = void 0;
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
-const db = admin.firestore();
 /**
  * Sync offline changes to Firestore
  * Called by the app when coming back online to upload local changes
@@ -45,6 +44,7 @@ exports.syncOfflineChanges = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
         throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
     }
+    const db = admin.firestore();
     const { changes } = data;
     const uid = context.auth.uid;
     if (!Array.isArray(changes) || changes.length === 0) {

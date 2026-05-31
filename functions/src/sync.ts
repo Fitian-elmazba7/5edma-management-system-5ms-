@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 
-const db = admin.firestore()
-
 /**
  * Sync offline changes to Firestore
  * Called by the app when coming back online to upload local changes
@@ -16,6 +14,7 @@ export const syncOfflineChanges = functions.https.onCall(
       )
     }
 
+    const db = admin.firestore()
     const { changes } = data
     const uid = context.auth.uid
 

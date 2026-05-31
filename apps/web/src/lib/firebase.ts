@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator, type Firestore } from 'firebase/firestore'
 import { getStorage, connectStorageEmulator, type FirebaseStorage } from 'firebase/storage'
+import { getFunctions, connectFunctionsEmulator, type Functions } from 'firebase/functions'
 import { type FirebaseApp } from 'firebase/app'
 
 interface FirebaseConfig {
@@ -34,6 +35,9 @@ export const db: Firestore = getFirestore(app)
 // Initialize Storage
 export const storage: FirebaseStorage = getStorage(app)
 
+// Initialize Cloud Functions
+export const functions: Functions = getFunctions(app)
+
 // Development: Connect to emulators if in development and they're available
 if (import.meta.env.DEV) {
   try {
@@ -60,6 +64,13 @@ if (import.meta.env.DEV) {
   } catch (error) {
     // Emulator not available or already connected
     console.debug('Storage emulator connection skipped:', error instanceof Error ? error.message : 'Unknown error')
+  }
+
+  try {
+    connectFunctionsEmulator(functions, 'localhost', 5001)
+  } catch (error) {
+    // Emulator not available or already connected
+    console.debug('Functions emulator connection skipped:', error instanceof Error ? error.message : 'Unknown error')
   }
 }
 

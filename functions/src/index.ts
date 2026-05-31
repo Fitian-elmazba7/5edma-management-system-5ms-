@@ -1,6 +1,8 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 
+import { syncOfflineChanges } from './sync'
+
 admin.initializeApp()
 
 const db = admin.firestore()
@@ -234,3 +236,6 @@ export const updateUserRole = functions.https.onCall(async (data, context) => {
     )
   }
 })
+
+// Export sync function
+export { syncOfflineChanges }

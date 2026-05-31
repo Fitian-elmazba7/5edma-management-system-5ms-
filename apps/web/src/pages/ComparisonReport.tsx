@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import * as XLSX from 'xlsx'
 import { GlassCard, GlassButton } from '../components/ui'
 import { formatDate } from '../lib/utils'
 
@@ -49,7 +50,36 @@ export default function ComparisonReportPage() {
       : mockComparisonData.filter((child) => child.class === selectedClass)
 
   const handleExportToExcel = () => {
-    alert('جاري تطوير خاصية التصدير إلى Excel')
+    if (filteredData.length === 0) {
+      alert('لا توجد بيانات للتصدير')
+      return
+    }
+
+    const exportData = filteredData.map((child) => ({
+      'الرقم': child.code,
+      'الاسم': child.name,
+      'الصف': child.class,
+      'إجمالي الأيام': child.totalDays,
+      'الحاضرين': child.presentDays,
+      'الغائبين': child.absentDays,
+      'النسبة': child.attendanceRate,
+    }))
+
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(exportData)
+
+    ws['!cols'] = [
+      { wch: 10 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+    ]
+
+    XLSX.utils.book_append_sheet(wb, ws, 'المقارنة')
+    XLSX.writeFile(wb, `مقارنة_${startDate}_الى_${endDate}.xlsx`)
   }
 
   return (

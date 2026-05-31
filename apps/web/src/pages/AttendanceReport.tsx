@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { GlassCard, GlassButton } from '../components/ui'
 import { useAttendanceStore } from '../store/attendance'
 import { useChildrenStore } from '../store/children'
+import { exportAttendanceReportToExcel } from '../lib/excel'
 import { formatDate } from '../lib/utils'
 
 export default function AttendanceReportPage() {
@@ -31,7 +32,16 @@ export default function AttendanceReportPage() {
       : presentChildren.filter((c) => c.class === selectedClass)
 
   const handleExportToExcel = () => {
-    alert('جاري تطوير خاصية التصدير إلى Excel')
+    if (!selectedDateStats || !presentChildren || presentChildren.length === 0) {
+      alert('لا توجد بيانات للتصدير')
+      return
+    }
+    exportAttendanceReportToExcel(
+      presentChildren,
+      selectedDate,
+      selectedDateStats,
+      `حضور_${selectedDate}.xlsx`,
+    )
   }
 
   return (

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { GlassCard, GlassButton } from '../components/ui'
 import { useAttendanceStore } from '../store/attendance'
 import { useSettingsStore } from '../store/settings'
+import { exportAbsenceReportToExcel } from '../lib/excel'
 import { formatDate } from '../lib/utils'
 
 export default function AbsencePage() {
@@ -38,6 +39,18 @@ export default function AbsencePage() {
   }
 
   const classes = ['الصف الأول', 'الصف الثاني', 'الصف الثالث']
+
+  const handleExportAbsence = () => {
+    if (absentChildren.length === 0) {
+      alert('لا توجد حالات غياب للتصدير')
+      return
+    }
+    exportAbsenceReportToExcel(
+      absentChildren,
+      selectedDate,
+      `غياب_${selectedDate}.xlsx`,
+    )
+  }
 
   return (
     <div className="min-h-screen bg-glass-bg p-6">
@@ -113,6 +126,15 @@ export default function AbsencePage() {
               disabled={absentChildren.length === 0}
             >
               توزيع على الخدام
+            </GlassButton>
+
+            <GlassButton
+              variant="secondary"
+              fullWidth
+              onClick={handleExportAbsence}
+              disabled={absentChildren.length === 0}
+            >
+              📤 تصدير Excel
             </GlassButton>
 
             {/* Service Days Filter */}

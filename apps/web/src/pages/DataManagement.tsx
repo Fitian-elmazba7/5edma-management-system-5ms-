@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { GlassCard, GlassButton, GlassInput, ChildCard } from '../components/ui'
 import { useChildrenStore } from '../store/children'
+import ExcelImportModal from '../components/modals/ExcelImportModal'
+import { exportChildrenToExcel, exportBlankTemplate } from '../lib/excel'
 import { Child } from '@5edma/shared'
 
 export default function DataManagementPage() {
@@ -19,6 +21,7 @@ export default function DataManagementPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
 
   const [formData, setFormData] = useState<Partial<Child>>({
     code: '',
@@ -91,6 +94,28 @@ export default function DataManagementPage() {
     }
   }
 
+  const handleImportChildren = async (
+    importedChildren: Child[],
+    incremental: boolean,
+  ) => {
+    try {
+      const result = await importChildren(importedChildren)
+      alert(
+        `تم استيراد ${result.imported} طفل/ة بنجاح\nتخطي ${result.skipped} موجود`,
+      )
+    } catch (err) {
+      alert('خطأ في استيراد البيانات')
+    }
+  }
+
+  const handleExportChildren = () => {
+    exportChildrenToExcel(filteredChildren, `أطفال_${new Date().toISOString().split('T')[0]}.xlsx`)
+  }
+
+  const handleDownloadTemplate = () => {
+    exportBlankTemplate()
+  }
+
   return (
     <div className="min-h-screen bg-glass-bg p-6">
       <div className="max-w-7xl mx-auto">
@@ -104,19 +129,39 @@ export default function DataManagementPage() {
               إدارة بيانات الأطفال والاستيراد من Excel
             </p>
           </div>
-          <GlassButton
-            variant="primary"
-            onClick={() => {
-              setFormData({
-                code: '',
-                name: '',
-                class: 'الصف الأول',
-              })
-              setShowAddModal(true)
-            }}
-          >
-            + إضافة طفل جديد
-          </GlassButton>
+          <div className="flex gap-3">
+            <GlassButton
+              variant="secondary"
+              onClick={() => setShowImportModal(true)}
+            >
+              📥 استيراد Excel
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              onClick={handleDownloadTemplate}
+            >
+              📄 نموذج
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              onClick={handleExportChildren}
+            >
+              📤 تصدير
+            </GlassButton>
+            <GlassButton
+              variant="primary"
+              onClick={() => {
+                setFormData({
+                  code: '',
+                  name: '',
+                  class: 'الصف الأول',
+                })
+                setShowAddModal(true)
+              }}
+            >
+              + إضافة طفل جديد
+            </GlassButton>
+          </div>
         </div>
 
         {/* Filters */}
@@ -257,6 +302,14 @@ export default function DataManagementPage() {
               </table>
             </div>
           </GlassCard>
+        )}
+
+        {/* Excel Import Modal */}
+        {showImportModal && (
+          <ExcelImportModal
+            onClose={() => setShowImportModal(false)}
+            onImport={handleImportChildren}
+          />
         )}
 
         {/* Add/Edit Modal */}

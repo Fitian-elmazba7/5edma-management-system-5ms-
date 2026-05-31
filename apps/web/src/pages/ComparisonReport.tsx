@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import * as XLSX from 'xlsx'
+import { useState } from 'react'
 import { GlassCard, GlassButton } from '../components/ui'
 import { formatDate } from '../lib/utils'
 

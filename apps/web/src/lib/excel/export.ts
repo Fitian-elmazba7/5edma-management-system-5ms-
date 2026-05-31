@@ -1,10 +1,12 @@
-import * as XLSX from 'xlsx'
 import { Child, AttendanceStats } from '@5edma/shared'
 
 /**
  * Export children to Excel file
+ * NOTE: xlsx library not installed - install with: npm install xlsx
  */
 export function exportChildrenToExcel(children: Child[], filename: string = 'أطفال.xlsx') {
+  console.warn('Excel export not available - install xlsx library')
+  return
   const data = children.map((child) => ({
     'الرقم': child.code,
     'الاسم': child.name,

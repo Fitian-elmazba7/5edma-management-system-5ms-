@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getRole() {
+      return request.auth.token.role;
+    }
+
+    function isAdmin() {
+      return getRole() == 'admin';
+    }
+
+    function isServant() {
+      return getRole() == 'servant';
+    }
+
+    function isViewer() {
+      return getRole() == 'viewer';
+    }
+
+    function isUser() {
+      return getRole() == 'user';
+    }
+
+    // Returns true if user has any of the specified roles
+    function hasRole(roles) {
+      return getRole() in roles;
+    }
+
+    // Settings collection - read/write for admin only
+    match /settings/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Children collection - role-based access
+    match /children/{code} {
+      // Anyone authenticated can read children
+      allow read: if isAuthenticated();
+
+      // Only admin can create, update, delete
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Attendance collection - date-based documents
+    match /attendance/{date} {
+      // Read: admin, servant, viewer can read
+      allow read: if hasRole(['admin', 'servant', 'viewer', 'user']);
+
+      // Write: admin and servant can record/update attendance
+      allow write: if hasRole(['admin', 'servant']);
+    }
+
+    // Users collection - admin management only
+    match /users/{uid} {
+      // User can read their own document
+      allow read: if isAuthenticated() && request.auth.uid == uid;
+
+      // Only admin can create new users
+      allow create: if isAdmin();
+
+      // Users can update their own document (except role)
+      allow update: if request.auth.uid == uid &&
+                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']);
+
+      // Only admin can update roles or delete
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Sync metadata collection - for tracking last sync times
+    match /sync/{uid} {
+      allow read: if request.auth.uid == uid;
+      allow write: if request.auth.uid == uid;
+    }
+  }
+}

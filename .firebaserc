@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "fitian-el-mazba7"
+  },
+  "targets": {
+    "fitian-el-mazba7": {
+      "hosting": {
+        "web": ["5edma-management-system"]
+      }
+    }
+  },
+  "etags": {}
+}

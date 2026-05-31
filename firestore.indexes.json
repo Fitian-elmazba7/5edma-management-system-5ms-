@@ -1,0 +1,82 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "children",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "class",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "attendance",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "serviceDay",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "attendance",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "childCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "children",
+      "queryScope": "Collection",
+      "fields": [
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "children",
+      "fieldPath": "code",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "Collection"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "attendance",
+      "fieldPath": "date",
+      "indexes": [
+        {
+          "order": "DESCENDING",
+          "queryScope": "Collection"
+        }
+      ]
+    }
+  ]
+}

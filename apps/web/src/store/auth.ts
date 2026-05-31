@@ -1,11 +1,12 @@
 import { create } from 'zustand'
-import { auth } from '../lib/firebase'
+import { auth, db } from '../lib/firebase'
 import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   User as FirebaseUser,
 } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import { User, UserRole } from '@5edma/shared'
 
 interface AuthState {
@@ -59,12 +60,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   initializeAuth: () => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        let role: UserRole = (firebaseUser.customClaims?.role || 'viewer') as UserRole
+
+        // Fallback: check Firestore user document for role
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid)
+          const userDocSnap = await getDoc(userDocRef)
+          if (userDocSnap.exists()) {
+            const firestoreRole = userDocSnap.data().role
+            if (firestoreRole) {
+              role = firestoreRole as UserRole
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to fetch user role from Firestore:', error)
+        }
+
         // Convert Firebase user to our User type
         const user: User = {
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
           displayName: firebaseUser.displayName || '',
-          role: (firebaseUser.customClaims?.role || 'viewer') as UserRole,
+          role,
           createdAt: firebaseUser.metadata.creationTime
             ? new Date(firebaseUser.metadata.creationTime).getTime()
             : Date.now(),

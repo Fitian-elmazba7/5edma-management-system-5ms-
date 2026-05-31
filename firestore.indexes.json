@@ -2,7 +2,7 @@
   "indexes": [
     {
       "collectionGroup": "children",
-      "queryScope": "Collection",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "class",
@@ -16,7 +16,7 @@
     },
     {
       "collectionGroup": "attendance",
-      "queryScope": "Collection",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "date",
@@ -30,7 +30,7 @@
     },
     {
       "collectionGroup": "attendance",
-      "queryScope": "Collection",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "childCode",
@@ -44,7 +44,7 @@
     },
     {
       "collectionGroup": "children",
-      "queryScope": "Collection",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "updatedAt",
@@ -64,7 +64,7 @@
       "indexes": [
         {
           "order": "ASCENDING",
-          "queryScope": "Collection"
+          "queryScope": "COLLECTION"
         }
       ]
     },
@@ -74,7 +74,7 @@
       "indexes": [
         {
           "order": "DESCENDING",
-          "queryScope": "Collection"
+          "queryScope": "COLLECTION"
         }
       ]
     }

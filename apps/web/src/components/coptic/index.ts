@@ -6,4 +6,3 @@ export { CopticSearch } from './CopticSearch';
 export { CornerArch } from './CornerArch';
 export { GoldBorder } from './GoldBorder';
 export { DataTable } from './DataTable';
-export { NavigationSidebar } from './NavigationSidebar';

@@ -33,8 +33,8 @@ const config: Config = {
         xxl: 'var(--spacing-xxl)',
       },
       fontFamily: {
-        display: "var(--font-display)",
-        body: "var(--font-body)",
+        display: "var(--font-family-heading)",
+        body: "var(--font-family-body)",
       },
       boxShadow: {
         glass: 'var(--shadow-glass)',

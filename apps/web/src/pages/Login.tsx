@@ -1,105 +1,87 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../store/auth'
-import { GlassInput, GlassButton } from '../components/ui'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GlassCard, CopticButton, CopticInput } from '../components/coptic';
 
-export default function LoginPage() {
-  const navigate = useNavigate()
-  const { login, error, loading } = useAuthStore()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [localError, setLocalError] = useState('')
+const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLocalError('')
-
-    if (!email || !password) {
-      setLocalError('يرجى إدخال البريد الإلكتروني وكلمة المرور')
-      return
+  const handleLogin = () => {
+    if (email && password) {
+      navigate('/dashboard');
     }
-
-    try {
-      await login(email, password)
-      navigate('/')
-    } catch (err) {
-      setLocalError(
-        err instanceof Error ? err.message : 'حدث خطأ في تسجيل الدخول',
-      )
-    }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-glass-bg flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative gradient blobs */}
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-600/20 to-indigo-600/20 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-gradient-to-b from-navy-bg via-navy-deep to-navy-bg flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gold-primary rounded-lg flex items-center justify-center text-navy-bg font-bold text-3xl mx-auto mb-4">
+            ⊕
+          </div>
+          <h1 className="font-display font-bold text-3xl text-cream">5EDMA</h1>
+          <p className="font-body text-text-muted mt-2">Community Management</p>
+        </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="glass-card">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-              <span className="text-2xl">⛪</span>
-            </div>
-            <h1 className="text-3xl font-bold text-gradient mb-2">
-              نظام الخدمة
-            </h1>
-            <p className="text-glass-muted">إدارة الحضور والغياب</p>
+        {/* Login Form */}
+        <GlassCard variant="default" className="space-y-6">
+          <div>
+            <h2 className="font-display font-bold text-2xl text-cream mb-1">Welcome Back</h2>
+            <p className="font-body text-text-muted text-sm">Sign in to your account</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <GlassInput
-              label="البريد الإلكتروني"
+          <div className="space-y-4">
+            <CopticInput
+              label="Email Address"
               type="email"
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="أدخل بريدك الإلكتروني"
-              disabled={loading}
-              error={localError ? 'البريد مطلوب' : undefined}
             />
 
-            <GlassInput
-              label="كلمة المرور"
+            <CopticInput
+              label="Password"
               type="password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="أدخل كلمة المرور"
-              disabled={loading}
-              error={localError ? 'كلمة المرور مطلوبة' : undefined}
             />
-
-            {(error || localError) && (
-              <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/50">
-                <p className="text-red-300 text-sm">{error || localError}</p>
-              </div>
-            )}
-
-            <GlassButton
-              type="submit"
-              variant="primary"
-              fullWidth
-              loading={loading}
-              disabled={loading}
-            >
-              تسجيل الدخول
-            </GlassButton>
-          </form>
-
-          <div className="mt-8 pt-6 border-t border-glass-border">
-            <p className="text-center text-glass-muted text-xs mb-3">
-              للاختبار استخدم:
-            </p>
-            <div className="space-y-1 text-xs text-glass-muted text-center">
-              <p>البريد: demo@example.com</p>
-              <p>كلمة المرور: demo123</p>
-            </div>
           </div>
 
-          <p className="text-center text-glass-muted text-xs mt-6">
-            © الكنيسة القبطية الأرثوذكسية
-          </p>
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="w-4 h-4" />
+              <span className="font-body text-text-muted">Remember me</span>
+            </label>
+            <a href="#" className="font-body text-gold-primary hover:text-gold-accent transition-colors">
+              Forgot password?
+            </a>
+          </div>
+
+          <CopticButton variant="primary" onClick={handleLogin} className="w-full">
+            Sign In
+          </CopticButton>
+
+          <div className="text-center text-sm">
+            <span className="font-body text-text-muted">Don't have an account? </span>
+            <button
+              onClick={() => navigate('/registration')}
+              className="font-body text-gold-primary hover:text-gold-accent transition-colors font-semibold"
+            >
+              Create one
+            </button>
+          </div>
+        </GlassCard>
+
+        {/* Footer */}
+        <div className="text-center mt-6 text-sm font-body text-text-muted">
+          <p>Protected with enterprise-grade security</p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default Login;

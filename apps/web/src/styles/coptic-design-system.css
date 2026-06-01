@@ -1,150 +1,110 @@
 /* ============================================================================
-   COPTIC DESIGN SYSTEM - Color Tokens & Typography
+   COPTIC DESIGN SYSTEM - Enhanced Coptic Specification
+   Dark theme with Navy/Gold color palette and glass morphism effects
    ============================================================================ */
 
-/* COLOR TOKENS - Coptic Gold & Liturgical Heritage */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ============================================================================
+   COLOR TOKENS - Enhanced Coptic Specification
+   ============================================================================ */
+
 :root {
-  /* Primary: Coptic Gold (representing the Coptic tradition) */
-  --coptic-gold-50: #fef9f0;
-  --coptic-gold-100: #fce8d6;
-  --coptic-gold-200: #f9d5aa;
-  --coptic-gold-300: #f5bc75;
-  --coptic-gold-400: #f2a84f;
-  --coptic-gold-500: #f0942a;        /* Main brand gold */
-  --coptic-gold-600: #d67c1f;
-  --coptic-gold-700: #b86216;
-  --coptic-gold-800: #8f4a10;
-  --coptic-gold-900: #6b360a;
+  /* Primary Colors - Navy & Gold */
+  --color-gold-primary: #d4af37;
+  --color-gold-accent: #c9a961;
+  --color-navy-deep: #1a3a52;
+  --color-navy-light: #2d5f7f;
+  --color-navy-bg: #0d1f2d;
+  --color-cream: #f5f1e6;
 
-  /* Secondary: Coptic Purple (liturgical color) */
-  --coptic-purple-50: #faf6ff;
-  --coptic-purple-100: #f0e2ff;
-  --coptic-purple-200: #e0c5ff;
-  --coptic-purple-300: #d0a8ff;
-  --coptic-purple-400: #b878ff;
-  --coptic-purple-500: #9d4edd;        /* Accent purple */
-  --coptic-purple-600: #7928ca;
-  --coptic-purple-700: #5a189a;
-  --coptic-purple-800: #3c096c;
-  --coptic-purple-900: #240046;
+  /* Text Colors */
+  --color-text-primary: #f5f1e6;
+  --color-text-muted: #a0aec0;
 
-  /* Tertiary: Coptic Red (spiritual significance) */
-  --coptic-red-50: #fff0f0;
-  --coptic-red-100: #ffe0e0;
-  --coptic-red-200: #ffc2c2;
-  --coptic-red-300: #ff9494;
-  --coptic-red-400: #ff6b6b;
-  --coptic-red-500: #c71f1f;         /* Deep red for accents */
-  --coptic-red-600: #a01818;
-  --coptic-red-700: #7d1414;
-  --coptic-red-800: #5a0a0a;
-  --coptic-red-900: #3d0707;
-
-  /* Neutrals: Cream & Stone (liturgical neutrals) */
-  --coptic-cream-50: #fffef8;
-  --coptic-cream-100: #fef9f0;
-  --coptic-cream-200: #fce8d6;
-  --coptic-cream-300: #f5e6d3;
-  --coptic-cream-400: #e8d4b8;
-  --coptic-cream-500: #d9c4a8;        /* Warm neutral */
-
-  --coptic-stone-50: #f8f7f6;
-  --coptic-stone-100: #ede6e0;
-  --coptic-stone-200: #ddd3c8;
-  --coptic-stone-300: #cdc2b5;
-  --coptic-stone-400: #bbb0a3;
-  --coptic-stone-500: #a89b8f;        /* Medium neutral */
-  --coptic-stone-600: #8b7d73;
-  --coptic-stone-700: #6b5f57;
-  --coptic-stone-800: #4a3f38;
-  --coptic-stone-900: #2a1f18;
+  /* Glass Effect Colors & Shadows */
+  --glass-effect-backdrop: blur(16px) saturate(180%);
+  --glass-effect-bg: rgba(26, 58, 82, 0.6);
+  --glass-effect-border: 1px solid rgba(212, 175, 55, 0.2);
+  --glass-effect-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --gold-glow-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
 
   /* Semantic Colors */
-  --coptic-success: #2d8f6d;          /* Healing green */
-  --coptic-warning: #d4a574;          /* Warm caution */
-  --coptic-error: #c71f1f;            /* Deep red (matches red-500) */
-  --coptic-info: #4a7db8;             /* Contemplative blue */
+  --color-success: #2d8f6d;
+  --color-warning: #d4a574;
+  --color-error: #c71f1f;
+  --color-info: #4a7db8;
 
-  /* Text & Background */
-  --coptic-text-primary: #2a1f18;     /* Dark stone */
-  --coptic-text-secondary: #6b5f57;   /* Medium stone */
-  --coptic-text-light: #bbb0a3;       /* Light stone */
-  --coptic-bg-primary: #fffef8;       /* Cream white */
-  --coptic-bg-secondary: #fef9f0;     /* Warm cream */
-  --coptic-bg-tertiary: #f5e6d3;      /* Light cream */
-  --coptic-border: #ddd3c8;           /* Stone border */
+  /* Shadow Scale */
+  --shadow-sm: 0 1px 2px rgba(13, 31, 45, 0.3);
+  --shadow-md: 0 4px 6px rgba(13, 31, 45, 0.4);
+  --shadow-lg: 0 10px 15px rgba(13, 31, 45, 0.5);
+  --shadow-xl: 0 20px 25px rgba(13, 31, 45, 0.6);
 
-  /* Shadows (warm, liturgical tone) */
-  --coptic-shadow-sm: 0 1px 2px rgba(42, 31, 24, 0.05);
-  --coptic-shadow-md: 0 4px 6px rgba(42, 31, 24, 0.1);
-  --coptic-shadow-lg: 0 10px 15px rgba(42, 31, 24, 0.15);
-  --coptic-shadow-xl: 0 20px 25px rgba(42, 31, 24, 0.2);
+  /* Spacing Scale (8px base unit) */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  --spacing-xxl: 64px;
 
-  /* Spacing Scale */
-  --coptic-space-xs: 0.25rem;
-  --coptic-space-sm: 0.5rem;
-  --coptic-space-md: 1rem;
-  --coptic-space-lg: 1.5rem;
-  --coptic-space-xl: 2rem;
-  --coptic-space-2xl: 3rem;
-  --coptic-space-3xl: 4rem;
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
 
-  /* Border Radius (subtle, reverent curves) */
-  --coptic-radius-none: 0;
-  --coptic-radius-sm: 0.25rem;
-  --coptic-radius-md: 0.5rem;
-  --coptic-radius-lg: 1rem;
-  --coptic-radius-full: 9999px;
+  /* Typography */
+  --font-family-heading: 'Outfit', sans-serif;
+  --font-family-body: 'Crimson Text', serif;
+  --font-family-mono: 'Courier New', 'Monaco', monospace;
 
-  /* Typography Scale */
-  --coptic-font-family-serif: 'Georgia', 'Garamond', serif;
-  --coptic-font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --coptic-font-family-mono: 'Courier New', 'Monaco', monospace;
-
-  /* Font Sizes (rem-based, starting from 16px base) */
-  --coptic-font-size-xs: 0.75rem;     /* 12px */
-  --coptic-font-size-sm: 0.875rem;    /* 14px */
-  --coptic-font-size-base: 1rem;      /* 16px */
-  --coptic-font-size-lg: 1.125rem;    /* 18px */
-  --coptic-font-size-xl: 1.25rem;     /* 20px */
-  --coptic-font-size-2xl: 1.5rem;     /* 24px */
-  --coptic-font-size-3xl: 1.875rem;   /* 30px */
-  --coptic-font-size-4xl: 2.25rem;    /* 36px */
-  --coptic-font-size-5xl: 3rem;       /* 48px */
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
 
   /* Line Heights */
-  --coptic-line-height-tight: 1.2;
-  --coptic-line-height-normal: 1.5;
-  --coptic-line-height-relaxed: 1.75;
-  --coptic-line-height-loose: 2;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
 
   /* Font Weights */
-  --coptic-font-weight-light: 300;
-  --coptic-font-weight-normal: 400;
-  --coptic-font-weight-medium: 500;
-  --coptic-font-weight-semibold: 600;
-  --coptic-font-weight-bold: 700;
-  --coptic-font-weight-extrabold: 800;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
   /* Letter Spacing */
-  --coptic-tracking-tight: -0.02em;
-  --coptic-tracking-normal: 0;
-  --coptic-tracking-wide: 0.05em;
-  --coptic-tracking-wider: 0.1em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.1em;
 
   /* Z-Index Scale */
-  --coptic-z-base: 1;
-  --coptic-z-dropdown: 1000;
-  --coptic-z-sticky: 1020;
-  --coptic-z-modal-backdrop: 1040;
-  --coptic-z-modal: 1050;
-  --coptic-z-popover: 1060;
-  --coptic-z-tooltip: 1070;
+  --z-base: 1;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
 
   /* Transitions */
-  --coptic-transition-fast: 150ms ease-in-out;
-  --coptic-transition-base: 250ms ease-in-out;
-  --coptic-transition-slow: 350ms ease-in-out;
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
 }
 
 /* ============================================================================
@@ -157,112 +117,113 @@ html {
 }
 
 body {
-  font-family: var(--coptic-font-family-sans);
-  font-size: var(--coptic-font-size-base);
-  line-height: var(--coptic-line-height-normal);
-  color: var(--coptic-text-primary);
-  background-color: var(--coptic-bg-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-navy-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--coptic-font-family-serif);
-  font-weight: var(--coptic-font-weight-bold);
-  line-height: var(--coptic-line-height-tight);
-  letter-spacing: var(--coptic-tracking-tight);
-  color: var(--coptic-text-primary);
-  margin-bottom: var(--coptic-space-md);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
 }
 
 h1 {
-  font-size: var(--coptic-font-size-5xl);
-  margin-top: var(--coptic-space-2xl);
+  font-size: var(--font-size-5xl);
+  margin-top: var(--spacing-xl);
 }
 
 h2 {
-  font-size: var(--coptic-font-size-4xl);
-  margin-top: var(--coptic-space-xl);
+  font-size: var(--font-size-4xl);
+  margin-top: var(--spacing-lg);
 }
 
 h3 {
-  font-size: var(--coptic-font-size-3xl);
-  margin-top: var(--coptic-space-lg);
+  font-size: var(--font-size-3xl);
+  margin-top: var(--spacing-lg);
 }
 
 h4 {
-  font-size: var(--coptic-font-size-2xl);
-  margin-top: var(--coptic-space-lg);
+  font-size: var(--font-size-2xl);
+  margin-top: var(--spacing-md);
 }
 
 h5 {
-  font-size: var(--coptic-font-size-xl);
-  margin-top: var(--coptic-space-md);
+  font-size: var(--font-size-xl);
+  margin-top: var(--spacing-md);
 }
 
 h6 {
-  font-size: var(--coptic-font-size-lg);
-  margin-top: var(--coptic-space-md);
+  font-size: var(--font-size-lg);
+  margin-top: var(--spacing-md);
   text-transform: uppercase;
-  letter-spacing: var(--coptic-tracking-wider);
+  letter-spacing: var(--tracking-wider);
 }
 
 /* Paragraph */
 p {
-  margin-bottom: var(--coptic-space-md);
+  margin-bottom: var(--spacing-md);
 }
 
 p + p {
-  margin-top: var(--coptic-space-md);
+  margin-top: var(--spacing-md);
 }
 
 /* Links */
 a {
-  color: var(--coptic-gold-600);
+  color: var(--color-gold-primary);
   text-decoration: none;
-  transition: color var(--coptic-transition-base);
+  transition: color var(--transition-base);
 }
 
 a:hover {
-  color: var(--coptic-gold-700);
+  color: var(--color-gold-accent);
   text-decoration: underline;
 }
 
 a:active {
-  color: var(--coptic-gold-800);
+  color: var(--color-gold-primary);
 }
 
 /* Lists */
 ul, ol {
-  margin-bottom: var(--coptic-space-md);
-  padding-left: var(--coptic-space-xl);
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-lg);
 }
 
 li {
-  margin-bottom: var(--coptic-space-sm);
+  margin-bottom: var(--spacing-sm);
 }
 
 /* Code & Monospace */
 code, pre, kbd, samp {
-  font-family: var(--coptic-font-family-mono);
-  font-size: var(--coptic-font-size-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
 }
 
 code {
-  background-color: var(--coptic-bg-tertiary);
-  color: var(--coptic-red-700);
-  padding: var(--coptic-space-xs) var(--coptic-space-sm);
-  border-radius: var(--coptic-radius-sm);
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--color-gold-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
 }
 
 pre {
-  background-color: var(--coptic-text-primary);
-  color: var(--coptic-cream-100);
-  padding: var(--coptic-space-md);
-  border-radius: var(--coptic-radius-md);
+  background-color: var(--color-navy-deep);
+  color: var(--color-cream);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
   overflow-x: auto;
-  margin-bottom: var(--coptic-space-md);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-navy-light);
 }
 
 pre code {
@@ -274,19 +235,19 @@ pre code {
 
 /* Blockquote */
 blockquote {
-  border-left: 4px solid var(--coptic-gold-500);
-  padding-left: var(--coptic-space-md);
+  border-left: 4px solid var(--color-gold-primary);
+  padding-left: var(--spacing-md);
   margin-left: 0;
-  margin-bottom: var(--coptic-space-md);
-  color: var(--coptic-text-secondary);
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
 /* Horizontal Rule */
 hr {
   border: none;
-  border-top: 1px solid var(--coptic-border);
-  margin: var(--coptic-space-lg) 0;
+  border-top: 1px solid var(--color-navy-light);
+  margin: var(--spacing-lg) 0;
 }
 
 /* ============================================================================
@@ -307,12 +268,22 @@ input[type="tel"],
 input[type="url"],
 textarea {
   width: 100%;
-  padding: var(--coptic-space-sm) var(--coptic-space-md);
-  border: 1px solid var(--coptic-border);
-  border-radius: var(--coptic-radius-md);
-  background-color: var(--coptic-bg-primary);
-  color: var(--coptic-text-primary);
-  transition: border-color var(--coptic-transition-base), box-shadow var(--coptic-transition-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-navy-light);
+  border-radius: var(--radius-md);
+  background-color: var(--color-navy-deep);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="url"]::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
 }
 
 input[type="text"]:focus,
@@ -323,8 +294,8 @@ input[type="tel"]:focus,
 input[type="url"]:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--coptic-gold-500);
-  box-shadow: 0 0 0 3px rgba(240, 148, 42, 0.1);
+  border-color: var(--color-gold-primary);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
 }
 
 textarea {
@@ -335,10 +306,11 @@ textarea {
 /* Buttons */
 button, [role="button"] {
   cursor: pointer;
-  transition: all var(--coptic-transition-base);
-  border-radius: var(--coptic-radius-md);
-  padding: var(--coptic-space-sm) var(--coptic-space-md);
-  font-weight: var(--coptic-font-weight-medium);
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-heading);
 }
 
 button:disabled, [role="button"][disabled] {
@@ -349,141 +321,223 @@ button:disabled, [role="button"][disabled] {
 /* Select */
 select {
   width: 100%;
-  padding: var(--coptic-space-sm) var(--coptic-space-md);
-  border: 1px solid var(--coptic-border);
-  border-radius: var(--coptic-radius-md);
-  background-color: var(--coptic-bg-primary);
-  color: var(--coptic-text-primary);
-  transition: border-color var(--coptic-transition-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-navy-light);
+  border-radius: var(--radius-md);
+  background-color: var(--color-navy-deep);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-base);
 }
 
 select:focus {
   outline: none;
-  border-color: var(--coptic-gold-500);
+  border-color: var(--color-gold-primary);
+}
+
+/* ============================================================================
+   GLASS MORPHISM EFFECT UTILITIES
+   ============================================================================ */
+
+.glass {
+  backdrop-filter: var(--glass-effect-backdrop);
+  background: var(--glass-effect-bg);
+  border: var(--glass-effect-border);
+  box-shadow: var(--glass-effect-shadow);
+}
+
+.glass-card {
+  backdrop-filter: var(--glass-effect-backdrop);
+  background: var(--glass-effect-bg);
+  border: var(--glass-effect-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--glass-effect-shadow);
+}
+
+.glass-button {
+  backdrop-filter: var(--glass-effect-backdrop);
+  background: var(--glass-effect-bg);
+  border: var(--glass-effect-border);
+  color: var(--color-gold-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-heading);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.glass-button:hover {
+  background: rgba(26, 58, 82, 0.8);
+  box-shadow: var(--glass-effect-shadow), var(--gold-glow-shadow);
+}
+
+.gold-accent {
+  color: var(--color-gold-primary);
+}
+
+.gold-glow {
+  text-shadow: var(--gold-glow-shadow);
 }
 
 /* ============================================================================
    UTILITY CLASSES
    ============================================================================ */
 
+/* Text Colors */
 .text-primary {
-  color: var(--coptic-text-primary);
+  color: var(--color-text-primary);
 }
 
-.text-secondary {
-  color: var(--coptic-text-secondary);
-}
-
-.text-light {
-  color: var(--coptic-text-light);
-}
-
-.bg-primary {
-  background-color: var(--coptic-bg-primary);
-}
-
-.bg-secondary {
-  background-color: var(--coptic-bg-secondary);
-}
-
-.bg-tertiary {
-  background-color: var(--coptic-bg-tertiary);
+.text-muted {
+  color: var(--color-text-muted);
 }
 
 .text-gold {
-  color: var(--coptic-gold-500);
+  color: var(--color-gold-primary);
 }
 
-.text-purple {
-  color: var(--coptic-purple-500);
+.text-success {
+  color: var(--color-success);
 }
 
-.text-red {
-  color: var(--coptic-red-500);
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-info {
+  color: var(--color-info);
+}
+
+/* Background Colors */
+.bg-navy-bg {
+  background-color: var(--color-navy-bg);
+}
+
+.bg-navy-deep {
+  background-color: var(--color-navy-deep);
+}
+
+.bg-navy-light {
+  background-color: var(--color-navy-light);
 }
 
 .bg-gold {
-  background-color: var(--coptic-gold-500);
+  background-color: var(--color-gold-primary);
 }
 
-.bg-purple {
-  background-color: var(--coptic-purple-500);
+/* Font Family Utilities */
+.font-heading {
+  font-family: var(--font-family-heading);
 }
 
-.bg-red {
-  background-color: var(--coptic-red-500);
-}
-
-/* Font Utilities */
-.font-serif {
-  font-family: var(--coptic-font-family-serif);
-}
-
-.font-sans {
-  font-family: var(--coptic-font-family-sans);
+.font-body {
+  font-family: var(--font-family-body);
 }
 
 .font-mono {
-  font-family: var(--coptic-font-family-mono);
+  font-family: var(--font-family-mono);
 }
 
+/* Font Weight Utilities */
 .font-light {
-  font-weight: var(--coptic-font-weight-light);
+  font-weight: var(--font-weight-light);
 }
 
 .font-normal {
-  font-weight: var(--coptic-font-weight-normal);
+  font-weight: var(--font-weight-normal);
 }
 
 .font-medium {
-  font-weight: var(--coptic-font-weight-medium);
+  font-weight: var(--font-weight-medium);
 }
 
 .font-semibold {
-  font-weight: var(--coptic-font-weight-semibold);
+  font-weight: var(--font-weight-semibold);
 }
 
 .font-bold {
-  font-weight: var(--coptic-font-weight-bold);
+  font-weight: var(--font-weight-bold);
 }
 
-.font-extrabold {
-  font-weight: var(--coptic-font-weight-extrabold);
-}
+/* Font Size Utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
 
 /* Spacing Utilities */
-.p-xs { padding: var(--coptic-space-xs); }
-.p-sm { padding: var(--coptic-space-sm); }
-.p-md { padding: var(--coptic-space-md); }
-.p-lg { padding: var(--coptic-space-lg); }
-.p-xl { padding: var(--coptic-space-xl); }
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+.p-xxl { padding: var(--spacing-xxl); }
 
-.m-xs { margin: var(--coptic-space-xs); }
-.m-sm { margin: var(--coptic-space-sm); }
-.m-md { margin: var(--coptic-space-md); }
-.m-lg { margin: var(--coptic-space-lg); }
-.m-xl { margin: var(--coptic-space-xl); }
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+.m-xl { margin: var(--spacing-xl); }
+.m-xxl { margin: var(--spacing-xxl); }
+
+.px-xs { padding-left: var(--spacing-xs); padding-right: var(--spacing-xs); }
+.px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+.px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+.px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+
+.py-xs { padding-top: var(--spacing-xs); padding-bottom: var(--spacing-xs); }
+.py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+.py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+.py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
 
 /* Shadow Utilities */
 .shadow-sm {
-  box-shadow: var(--coptic-shadow-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .shadow-md {
-  box-shadow: var(--coptic-shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 .shadow-lg {
-  box-shadow: var(--coptic-shadow-lg);
+  box-shadow: var(--shadow-lg);
 }
 
 .shadow-xl {
-  box-shadow: var(--coptic-shadow-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.shadow-gold {
+  box-shadow: var(--gold-glow-shadow);
 }
 
 /* Border Radius Utilities */
-.rounded-none { border-radius: var(--coptic-radius-none); }
-.rounded-sm { border-radius: var(--coptic-radius-sm); }
-.rounded-md { border-radius: var(--coptic-radius-md); }
-.rounded-lg { border-radius: var(--coptic-radius-lg); }
-.rounded-full { border-radius: var(--coptic-radius-full); }
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Display Utilities */
+.block { display: block; }
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.grid { display: grid; }
+.hidden { display: none; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root {
+    --font-size-5xl: 2.25rem;
+    --font-size-4xl: 1.875rem;
+    --font-size-3xl: 1.5rem;
+  }
+}

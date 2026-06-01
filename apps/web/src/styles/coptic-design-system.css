@@ -1,0 +1,489 @@
+/* ============================================================================
+   COPTIC DESIGN SYSTEM - Color Tokens & Typography
+   ============================================================================ */
+
+/* COLOR TOKENS - Coptic Gold & Liturgical Heritage */
+:root {
+  /* Primary: Coptic Gold (representing the Coptic tradition) */
+  --coptic-gold-50: #fef9f0;
+  --coptic-gold-100: #fce8d6;
+  --coptic-gold-200: #f9d5aa;
+  --coptic-gold-300: #f5bc75;
+  --coptic-gold-400: #f2a84f;
+  --coptic-gold-500: #f0942a;        /* Main brand gold */
+  --coptic-gold-600: #d67c1f;
+  --coptic-gold-700: #b86216;
+  --coptic-gold-800: #8f4a10;
+  --coptic-gold-900: #6b360a;
+
+  /* Secondary: Coptic Purple (liturgical color) */
+  --coptic-purple-50: #faf6ff;
+  --coptic-purple-100: #f0e2ff;
+  --coptic-purple-200: #e0c5ff;
+  --coptic-purple-300: #d0a8ff;
+  --coptic-purple-400: #b878ff;
+  --coptic-purple-500: #9d4edd;        /* Accent purple */
+  --coptic-purple-600: #7928ca;
+  --coptic-purple-700: #5a189a;
+  --coptic-purple-800: #3c096c;
+  --coptic-purple-900: #240046;
+
+  /* Tertiary: Coptic Red (spiritual significance) */
+  --coptic-red-50: #fff0f0;
+  --coptic-red-100: #ffe0e0;
+  --coptic-red-200: #ffc2c2;
+  --coptic-red-300: #ff9494;
+  --coptic-red-400: #ff6b6b;
+  --coptic-red-500: #c71f1f;         /* Deep red for accents */
+  --coptic-red-600: #a01818;
+  --coptic-red-700: #7d1414;
+  --coptic-red-800: #5a0a0a;
+  --coptic-red-900: #3d0707;
+
+  /* Neutrals: Cream & Stone (liturgical neutrals) */
+  --coptic-cream-50: #fffef8;
+  --coptic-cream-100: #fef9f0;
+  --coptic-cream-200: #fce8d6;
+  --coptic-cream-300: #f5e6d3;
+  --coptic-cream-400: #e8d4b8;
+  --coptic-cream-500: #d9c4a8;        /* Warm neutral */
+
+  --coptic-stone-50: #f8f7f6;
+  --coptic-stone-100: #ede6e0;
+  --coptic-stone-200: #ddd3c8;
+  --coptic-stone-300: #cdc2b5;
+  --coptic-stone-400: #bbb0a3;
+  --coptic-stone-500: #a89b8f;        /* Medium neutral */
+  --coptic-stone-600: #8b7d73;
+  --coptic-stone-700: #6b5f57;
+  --coptic-stone-800: #4a3f38;
+  --coptic-stone-900: #2a1f18;
+
+  /* Semantic Colors */
+  --coptic-success: #2d8f6d;          /* Healing green */
+  --coptic-warning: #d4a574;          /* Warm caution */
+  --coptic-error: #c71f1f;            /* Deep red (matches red-500) */
+  --coptic-info: #4a7db8;             /* Contemplative blue */
+
+  /* Text & Background */
+  --coptic-text-primary: #2a1f18;     /* Dark stone */
+  --coptic-text-secondary: #6b5f57;   /* Medium stone */
+  --coptic-text-light: #bbb0a3;       /* Light stone */
+  --coptic-bg-primary: #fffef8;       /* Cream white */
+  --coptic-bg-secondary: #fef9f0;     /* Warm cream */
+  --coptic-bg-tertiary: #f5e6d3;      /* Light cream */
+  --coptic-border: #ddd3c8;           /* Stone border */
+
+  /* Shadows (warm, liturgical tone) */
+  --coptic-shadow-sm: 0 1px 2px rgba(42, 31, 24, 0.05);
+  --coptic-shadow-md: 0 4px 6px rgba(42, 31, 24, 0.1);
+  --coptic-shadow-lg: 0 10px 15px rgba(42, 31, 24, 0.15);
+  --coptic-shadow-xl: 0 20px 25px rgba(42, 31, 24, 0.2);
+
+  /* Spacing Scale */
+  --coptic-space-xs: 0.25rem;
+  --coptic-space-sm: 0.5rem;
+  --coptic-space-md: 1rem;
+  --coptic-space-lg: 1.5rem;
+  --coptic-space-xl: 2rem;
+  --coptic-space-2xl: 3rem;
+  --coptic-space-3xl: 4rem;
+
+  /* Border Radius (subtle, reverent curves) */
+  --coptic-radius-none: 0;
+  --coptic-radius-sm: 0.25rem;
+  --coptic-radius-md: 0.5rem;
+  --coptic-radius-lg: 1rem;
+  --coptic-radius-full: 9999px;
+
+  /* Typography Scale */
+  --coptic-font-family-serif: 'Georgia', 'Garamond', serif;
+  --coptic-font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --coptic-font-family-mono: 'Courier New', 'Monaco', monospace;
+
+  /* Font Sizes (rem-based, starting from 16px base) */
+  --coptic-font-size-xs: 0.75rem;     /* 12px */
+  --coptic-font-size-sm: 0.875rem;    /* 14px */
+  --coptic-font-size-base: 1rem;      /* 16px */
+  --coptic-font-size-lg: 1.125rem;    /* 18px */
+  --coptic-font-size-xl: 1.25rem;     /* 20px */
+  --coptic-font-size-2xl: 1.5rem;     /* 24px */
+  --coptic-font-size-3xl: 1.875rem;   /* 30px */
+  --coptic-font-size-4xl: 2.25rem;    /* 36px */
+  --coptic-font-size-5xl: 3rem;       /* 48px */
+
+  /* Line Heights */
+  --coptic-line-height-tight: 1.2;
+  --coptic-line-height-normal: 1.5;
+  --coptic-line-height-relaxed: 1.75;
+  --coptic-line-height-loose: 2;
+
+  /* Font Weights */
+  --coptic-font-weight-light: 300;
+  --coptic-font-weight-normal: 400;
+  --coptic-font-weight-medium: 500;
+  --coptic-font-weight-semibold: 600;
+  --coptic-font-weight-bold: 700;
+  --coptic-font-weight-extrabold: 800;
+
+  /* Letter Spacing */
+  --coptic-tracking-tight: -0.02em;
+  --coptic-tracking-normal: 0;
+  --coptic-tracking-wide: 0.05em;
+  --coptic-tracking-wider: 0.1em;
+
+  /* Z-Index Scale */
+  --coptic-z-base: 1;
+  --coptic-z-dropdown: 1000;
+  --coptic-z-sticky: 1020;
+  --coptic-z-modal-backdrop: 1040;
+  --coptic-z-modal: 1050;
+  --coptic-z-popover: 1060;
+  --coptic-z-tooltip: 1070;
+
+  /* Transitions */
+  --coptic-transition-fast: 150ms ease-in-out;
+  --coptic-transition-base: 250ms ease-in-out;
+  --coptic-transition-slow: 350ms ease-in-out;
+}
+
+/* ============================================================================
+   BASE TYPOGRAPHY
+   ============================================================================ */
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--coptic-font-family-sans);
+  font-size: var(--coptic-font-size-base);
+  line-height: var(--coptic-line-height-normal);
+  color: var(--coptic-text-primary);
+  background-color: var(--coptic-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--coptic-font-family-serif);
+  font-weight: var(--coptic-font-weight-bold);
+  line-height: var(--coptic-line-height-tight);
+  letter-spacing: var(--coptic-tracking-tight);
+  color: var(--coptic-text-primary);
+  margin-bottom: var(--coptic-space-md);
+}
+
+h1 {
+  font-size: var(--coptic-font-size-5xl);
+  margin-top: var(--coptic-space-2xl);
+}
+
+h2 {
+  font-size: var(--coptic-font-size-4xl);
+  margin-top: var(--coptic-space-xl);
+}
+
+h3 {
+  font-size: var(--coptic-font-size-3xl);
+  margin-top: var(--coptic-space-lg);
+}
+
+h4 {
+  font-size: var(--coptic-font-size-2xl);
+  margin-top: var(--coptic-space-lg);
+}
+
+h5 {
+  font-size: var(--coptic-font-size-xl);
+  margin-top: var(--coptic-space-md);
+}
+
+h6 {
+  font-size: var(--coptic-font-size-lg);
+  margin-top: var(--coptic-space-md);
+  text-transform: uppercase;
+  letter-spacing: var(--coptic-tracking-wider);
+}
+
+/* Paragraph */
+p {
+  margin-bottom: var(--coptic-space-md);
+}
+
+p + p {
+  margin-top: var(--coptic-space-md);
+}
+
+/* Links */
+a {
+  color: var(--coptic-gold-600);
+  text-decoration: none;
+  transition: color var(--coptic-transition-base);
+}
+
+a:hover {
+  color: var(--coptic-gold-700);
+  text-decoration: underline;
+}
+
+a:active {
+  color: var(--coptic-gold-800);
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--coptic-space-md);
+  padding-left: var(--coptic-space-xl);
+}
+
+li {
+  margin-bottom: var(--coptic-space-sm);
+}
+
+/* Code & Monospace */
+code, pre, kbd, samp {
+  font-family: var(--coptic-font-family-mono);
+  font-size: var(--coptic-font-size-sm);
+}
+
+code {
+  background-color: var(--coptic-bg-tertiary);
+  color: var(--coptic-red-700);
+  padding: var(--coptic-space-xs) var(--coptic-space-sm);
+  border-radius: var(--coptic-radius-sm);
+}
+
+pre {
+  background-color: var(--coptic-text-primary);
+  color: var(--coptic-cream-100);
+  padding: var(--coptic-space-md);
+  border-radius: var(--coptic-radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--coptic-space-md);
+}
+
+pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 4px solid var(--coptic-gold-500);
+  padding-left: var(--coptic-space-md);
+  margin-left: 0;
+  margin-bottom: var(--coptic-space-md);
+  color: var(--coptic-text-secondary);
+  font-style: italic;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--coptic-border);
+  margin: var(--coptic-space-lg) 0;
+}
+
+/* ============================================================================
+   BASE FORM ELEMENTS
+   ============================================================================ */
+
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: var(--coptic-space-sm) var(--coptic-space-md);
+  border: 1px solid var(--coptic-border);
+  border-radius: var(--coptic-radius-md);
+  background-color: var(--coptic-bg-primary);
+  color: var(--coptic-text-primary);
+  transition: border-color var(--coptic-transition-base), box-shadow var(--coptic-transition-base);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--coptic-gold-500);
+  box-shadow: 0 0 0 3px rgba(240, 148, 42, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Buttons */
+button, [role="button"] {
+  cursor: pointer;
+  transition: all var(--coptic-transition-base);
+  border-radius: var(--coptic-radius-md);
+  padding: var(--coptic-space-sm) var(--coptic-space-md);
+  font-weight: var(--coptic-font-weight-medium);
+}
+
+button:disabled, [role="button"][disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Select */
+select {
+  width: 100%;
+  padding: var(--coptic-space-sm) var(--coptic-space-md);
+  border: 1px solid var(--coptic-border);
+  border-radius: var(--coptic-radius-md);
+  background-color: var(--coptic-bg-primary);
+  color: var(--coptic-text-primary);
+  transition: border-color var(--coptic-transition-base);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--coptic-gold-500);
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.text-primary {
+  color: var(--coptic-text-primary);
+}
+
+.text-secondary {
+  color: var(--coptic-text-secondary);
+}
+
+.text-light {
+  color: var(--coptic-text-light);
+}
+
+.bg-primary {
+  background-color: var(--coptic-bg-primary);
+}
+
+.bg-secondary {
+  background-color: var(--coptic-bg-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--coptic-bg-tertiary);
+}
+
+.text-gold {
+  color: var(--coptic-gold-500);
+}
+
+.text-purple {
+  color: var(--coptic-purple-500);
+}
+
+.text-red {
+  color: var(--coptic-red-500);
+}
+
+.bg-gold {
+  background-color: var(--coptic-gold-500);
+}
+
+.bg-purple {
+  background-color: var(--coptic-purple-500);
+}
+
+.bg-red {
+  background-color: var(--coptic-red-500);
+}
+
+/* Font Utilities */
+.font-serif {
+  font-family: var(--coptic-font-family-serif);
+}
+
+.font-sans {
+  font-family: var(--coptic-font-family-sans);
+}
+
+.font-mono {
+  font-family: var(--coptic-font-family-mono);
+}
+
+.font-light {
+  font-weight: var(--coptic-font-weight-light);
+}
+
+.font-normal {
+  font-weight: var(--coptic-font-weight-normal);
+}
+
+.font-medium {
+  font-weight: var(--coptic-font-weight-medium);
+}
+
+.font-semibold {
+  font-weight: var(--coptic-font-weight-semibold);
+}
+
+.font-bold {
+  font-weight: var(--coptic-font-weight-bold);
+}
+
+.font-extrabold {
+  font-weight: var(--coptic-font-weight-extrabold);
+}
+
+/* Spacing Utilities */
+.p-xs { padding: var(--coptic-space-xs); }
+.p-sm { padding: var(--coptic-space-sm); }
+.p-md { padding: var(--coptic-space-md); }
+.p-lg { padding: var(--coptic-space-lg); }
+.p-xl { padding: var(--coptic-space-xl); }
+
+.m-xs { margin: var(--coptic-space-xs); }
+.m-sm { margin: var(--coptic-space-sm); }
+.m-md { margin: var(--coptic-space-md); }
+.m-lg { margin: var(--coptic-space-lg); }
+.m-xl { margin: var(--coptic-space-xl); }
+
+/* Shadow Utilities */
+.shadow-sm {
+  box-shadow: var(--coptic-shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--coptic-shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--coptic-shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--coptic-shadow-xl);
+}
+
+/* Border Radius Utilities */
+.rounded-none { border-radius: var(--coptic-radius-none); }
+.rounded-sm { border-radius: var(--coptic-radius-sm); }
+.rounded-md { border-radius: var(--coptic-radius-md); }
+.rounded-lg { border-radius: var(--coptic-radius-lg); }
+.rounded-full { border-radius: var(--coptic-radius-full); }

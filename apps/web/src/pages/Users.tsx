@@ -1,149 +1,80 @@
-import { useState } from 'react'
-import { useAuthStore } from '../store/auth'
-import { Navigate } from 'react-router-dom'
-import { GlassCard, GlassButton, GlassInput } from '../components/ui'
-import { UserRole } from '@5edma/shared'
-import { inviteUser } from '../lib/firebase-functions'
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '../context/NavigationContext';
+import { GlassCard, CopticButton, CopticInput, DataTable } from '../components/coptic';
 
-export default function UsersPage() {
-  const { user } = useAuthStore()
-  const [showInviteModal, setShowInviteModal] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteRole, setInviteRole] = useState<UserRole>('viewer')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+const Users: React.FC = () => {
+  const { setCurrentSection } = useNavigation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([
+    { id: 1, name: 'Ahmed Hassan', email: 'ahmed@example.com', role: 'Admin', status: 'Active' },
+    { id: 2, name: 'Sarah Mikhael', email: 'sarah@example.com', role: 'Moderator', status: 'Active' },
+    { id: 3, name: 'John Girgis', email: 'john@example.com', role: 'Member', status: 'Active' },
+    { id: 4, name: 'Mary Kamel', email: 'mary@example.com', role: 'Member', status: 'Inactive' },
+  ]);
 
-  // Only admins can access this page
-  if (user?.role !== 'admin') {
-    return <Navigate to="/" replace />
-  }
+  useEffect(() => {
+    setCurrentSection('admin');
+  }, [setCurrentSection]);
 
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    setSuccess(null)
-
-    try {
-      const result = await inviteUser(inviteEmail, inviteRole)
-      setSuccess(`تم إرسال الدعوة بنجاح إلى ${result.email}`)
-      setInviteEmail('')
-      setInviteRole('viewer')
-
-      // Close modal after 2 seconds
-      setTimeout(() => {
-        setShowInviteModal(false)
-        setSuccess(null)
-      }, 2000)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'فشل في إرسال الدعوة'
-      setError(message)
-      console.error('Failed to invite user:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-glass-bg p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient">إدارة المستخدمين</h1>
-          <GlassButton
-            variant="primary"
-            onClick={() => setShowInviteModal(true)}
-          >
-            دعوة مستخدم جديد
-          </GlassButton>
+    <div className="min-h-screen bg-navy-bg p-6 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-display font-bold text-4xl text-cream mb-2">Users</h1>
+          <p className="font-body text-text-muted text-lg">Manage community members and permissions</p>
         </div>
 
-        {/* Placeholder content */}
-        <GlassCard className="mb-8">
-          <h2 className="text-xl font-semibold text-glass-text mb-4">
-            قائمة المستخدمين
-          </h2>
-          <p className="text-glass-muted">
-            جاري تطوير قائمة المستخدمين - سيتم إتاحتها في المرحلة القادمة
-          </p>
-        </GlassCard>
-
-        {/* Invite Modal */}
-        {showInviteModal && (
-          <div className="modal-overlay">
-            <div className="modal-content max-w-md">
-              <div className="modal-header">
-                <h2 className="modal-title">دعوة مستخدم جديد</h2>
-                <button
-                  className="modal-close"
-                  onClick={() => setShowInviteModal(false)}
-                  disabled={loading}
-                >
-                  ✕
-                </button>
-              </div>
-
-              <form onSubmit={handleInvite} className="modal-body space-y-4">
-                {error && (
-                  <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-100 text-sm">
-                    {error}
-                  </div>
-                )}
-
-                {success && (
-                  <div className="bg-green-500/20 border border-green-500/50 rounded-lg p-3 text-green-100 text-sm">
-                    {success}
-                  </div>
-                )}
-
-                <GlassInput
-                  label="البريد الإلكتروني"
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="أدخل البريد الإلكتروني"
-                  required
-                  disabled={loading}
-                />
-
-                <div>
-                  <label className="block text-sm font-medium text-glass-text mb-2">
-                    الصلاحيات
-                  </label>
-                  <select
-                    value={inviteRole}
-                    onChange={(e) => setInviteRole(e.target.value as UserRole)}
-                    className="glass-select w-full"
-                    disabled={loading}
-                  >
-                    <option value="viewer">مشاهد</option>
-                    <option value="user">مستخدم</option>
-                    <option value="servant">خادم</option>
-                    <option value="admin">مسؤول</option>
-                  </select>
-                </div>
-
-                <div className="modal-footer">
-                  <GlassButton
-                    variant="secondary"
-                    onClick={() => setShowInviteModal(false)}
-                    disabled={loading}
-                  >
-                    إلغاء
-                  </GlassButton>
-                  <GlassButton
-                    type="submit"
-                    variant="primary"
-                    disabled={loading}
-                  >
-                    {loading ? 'جاري الإرسال...' : 'إرسال الدعوة'}
-                  </GlassButton>
-                </div>
-              </form>
+        {/* Controls */}
+        <GlassCard variant="default">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
+            <div className="flex-1">
+              <CopticInput
+                label="Search Users"
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <CopticButton variant="primary">Add User</CopticButton>
+              <CopticButton variant="secondary">Import</CopticButton>
             </div>
           </div>
-        )}
+        </GlassCard>
+
+        {/* Users Table */}
+        <GlassCard variant="default">
+          <h2 className="font-display font-semibold text-xl text-cream mb-4">
+            {filteredUsers.length} Users
+          </h2>
+          <DataTable
+            columns={[
+              { key: 'name', label: 'Name' },
+              { key: 'email', label: 'Email' },
+              { key: 'role', label: 'Role' },
+              { key: 'status', label: 'Status', render: (status) => (
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                  status === 'Active' 
+                    ? 'bg-green-500/20 text-green-300' 
+                    : 'bg-gray-500/20 text-gray-300'
+                }`}>
+                  {status}
+                </span>
+              )},
+            ]}
+            data={filteredUsers}
+          />
+        </GlassCard>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default Users;

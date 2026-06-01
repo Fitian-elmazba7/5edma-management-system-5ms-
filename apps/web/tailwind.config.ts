@@ -37,11 +37,11 @@ const config: Config = {
         body: "var(--font-family-body)",
       },
       boxShadow: {
-        glass: 'var(--shadow-glass)',
-        'gold-glow': 'var(--shadow-gold-glow)',
+        glass: 'var(--glass-effect-shadow)',
+        'gold-glow': 'var(--gold-glow-shadow)',
       },
       backdropBlur: {
-        glass: 'var(--glass-blur)',
+        glass: 'var(--glass-effect-backdrop)',
       },
       animation: {
         fadeIn: 'fadeIn 0.6s ease-in-out',
